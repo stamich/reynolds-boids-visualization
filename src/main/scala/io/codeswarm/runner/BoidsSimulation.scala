@@ -7,19 +7,19 @@ import scalafx.animation.AnimationTimer
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.paint.Color
-import scalafx.scene.shape.{Circle, Polygon}
+import scalafx.scene.shape.Polygon
 
 import scala.util.Random
 
 object BoidsSimulation extends JFXApp {
 
   // Function to generate a random color
-  def randomColor(): Color = {
+  private def randomColor(): Color = {
     Color(
       Random.nextDouble(), // Red
       Random.nextDouble(), // Green
       Random.nextDouble(), // Blue
-      1.0                   // Opacity
+      1.0                  // Opacity
     )
   }
 
