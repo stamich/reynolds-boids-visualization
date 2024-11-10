@@ -23,7 +23,7 @@ class BoidBehavior(boid: Boid) {
   }
 
   // Target attraction behavior: steer towards a specified target (e.g., cursor)
-  def steerToward(target: Vector2D): Vector2D = {
+  private def steerToward(target: Vector2D): Vector2D = {
     val desired = (target - boid.position).normalize * boid.maxSpeed
     limitForce(desired - boid.velocity)
   }
@@ -35,8 +35,7 @@ class BoidBehavior(boid: Boid) {
         (sum + other.velocity, count + 1)
       case (acc, _) => acc
     }
-    if (total > 0) limitForce((steering / total).normalize * boid.maxSpeed - boid.velocity)
-    else Vector2D(0, 0)
+    checkVector(total, steering)
   }
 
   // Cohesion behavior: steer towards average position of nearby boids
@@ -57,8 +56,7 @@ class BoidBehavior(boid: Boid) {
         (sum + (boid.position - other.position) / distance(other), count + 1)
       case (acc, _) => acc
     }
-    if (total > 0) limitForce((steering / total).normalize * boid.maxSpeed - boid.velocity)
-    else Vector2D(0, 0)
+    checkVector(total, steering)
   }
 
   // Helper function to calculate distance between two boids
@@ -67,7 +65,12 @@ class BoidBehavior(boid: Boid) {
   }
 
   // Limit the force to boid's maxForce
-  def limitForce(force: Vector2D): Vector2D = {
+  private def limitForce(force: Vector2D): Vector2D = {
     if (force.magnitude > boid.maxForce) force.normalize * boid.maxForce else force
+  }
+
+  private def checkVector(total: Int, steering: Vector2D): Vector2D = {
+    if (total > 0) limitForce((steering / total).normalize * boid.maxSpeed - boid.velocity)
+    else Vector2D(0, 0)
   }
 }
