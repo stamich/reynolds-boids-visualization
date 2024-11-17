@@ -23,7 +23,7 @@ class BoidBehavior(boid: Boid) {
   }
 
   // Target attraction behavior: steer towards a specified target (e.g., cursor)
-  private def steerToward(target: Vector2D): Vector2D = {
+  def steerToward(target: Vector2D): Vector2D = {
     val desired = (target - boid.position).normalize * boid.maxSpeed
     limitForce(desired - boid.velocity)
   }
