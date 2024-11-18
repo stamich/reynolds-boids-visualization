@@ -1,7 +1,6 @@
 package io.codeswarm.runner
 
-import io.codeswarm.algorithm.BoidBehavior
-import io.codeswarm.graphics.Vector2D
+import io.codeswarm.graphics.{ColorHandler, Vector2D}
 import io.codeswarm.model.Boid
 import scalafx.animation.AnimationTimer
 import scalafx.application.JFXApp
@@ -13,30 +12,12 @@ import scala.util.Random
 
 object BoidsSimulation extends JFXApp {
 
-  // Function to generate a random color
-  private def randomColor(): Color = {
-    Color(
-      Random.nextDouble(), // Red
-      Random.nextDouble(), // Green
-      Random.nextDouble(), // Blue
-      1.0                  // Opacity
-    )
-  }
-
   // Initial boid setup
   private val initialBoids: Seq[Boid] = (1 to 250).map { _ =>
     Boid(
       Vector2D(Random.nextDouble() * 1280, Random.nextDouble() * 960),
       Vector2D(Random.nextDouble() * 2 - 1, Random.nextDouble() * 2 - 1)
     )
-  }
-
-  // Function to update boids with target attraction to the cursor
-  private def updateBoids(boids: Seq[Boid], target: Vector2D): Seq[Boid] = {
-    boids.map { boid =>
-      val behavior = new BoidBehavior(boid)
-      behavior.update(boids, target)
-    }
   }
 
   stage = new JFXApp.PrimaryStage {
@@ -52,7 +33,8 @@ object BoidsSimulation extends JFXApp {
             -5.0, 5.0,   // Bottom left point of the triangle
             5.0, 5.0     // Bottom right point of the triangle
           )
-          fill = randomColor()
+          val color = new ColorHandler
+          fill = color.randomColor()
         }
       }
 
@@ -70,7 +52,8 @@ object BoidsSimulation extends JFXApp {
       var boids: Seq[Boid] = initialBoids
       val timer: AnimationTimer = AnimationTimer { _ =>
         // Update boids with the current cursor position as the target
-        boids = updateBoids(boids, cursorPosition)
+        val boid = Boid(Vector2D(0, 0), Vector2D(0, 0))
+        boids = boid.updateBoids(boids, cursorPosition)
 
         // Update each shape position and rotation based on the new boid data
         boidShapes.zip(boids).foreach { case (shape, boid) =>
