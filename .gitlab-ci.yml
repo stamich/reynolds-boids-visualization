@@ -17,7 +17,6 @@ stages:
   - package
 
 before_script:
-  # Install dependencies for ScalaFX in headless environment
   - apt-get update -y && apt-get install -y xvfb libxtst6 libxrender1
 
 compile:
@@ -46,7 +45,7 @@ test:
 package:
   stage: package
   script:
-    - sbt assembly
+    - sbt package
   dependencies:
     - test
   artifacts:
