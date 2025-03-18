@@ -30,20 +30,27 @@ compile:
 
 test:
   stage: test
-  script:
-    # Run tests with virtual display for ScalaFX
-    - xvfb-run sbt test
   dependencies:
     - compile
+  before_script:
+    - apt-get update && apt-get install -y xvfb
+    - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+    - export DISPLAY=:99
+  script:
+    - sbt test
+  artifacts:
+    reports:
+      junit: target/test-reports/*.xml
+    when: always
 
 package:
   stage: package
   script:
-    - sbt package
+    - sbt assembly
   dependencies:
     - test
   artifacts:
     paths:
-      - target/scala-*/*.jar
+      - target/scala-*/scalaboids_2.13-*.jar
   only:
     - main
