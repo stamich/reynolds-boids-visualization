@@ -4,7 +4,7 @@ ThisBuild / scalaVersion := "2.13.15"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "ScalaBoids"
+    name := "reynolds-boids-visualization"
   )
 
 // Determine OS version of JavaFX binaries
