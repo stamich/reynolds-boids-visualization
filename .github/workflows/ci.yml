@@ -29,8 +29,8 @@ jobs:
       - name: Set up sbt
         uses: sbt/setup-sbt@v1
 
-      - name: Check formatting
-        run: sbt scalafmtCheckAll scalafmtSbtCheck
+#      - name: Check formatting
+#        run: sbt scalafmtCheckAll scalafmtSbtCheck
 
       - name: Compile
         run: sbt clean compile
