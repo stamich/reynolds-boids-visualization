@@ -1,28 +1,41 @@
-ThisBuild / version := "1.0"
+ThisBuild / organization := "io.codeswarm"
+ThisBuild / version := "0.1.1"
+ThisBuild / scalaVersion := "2.13.18"
 
-ThisBuild / scalaVersion := "2.13.15"
+lazy val javafxVersion = "21.0.8"
+lazy val scalaFxVersion = "21.0.0-R32"
+lazy val breezeVersion = "2.1.0"
+lazy val scalaTestVersion = "3.2.19"
+
+lazy val javafxPlatform: String = {
+  val os = System.getProperty("os.name", "").toLowerCase
+  val arch = System.getProperty("os.arch", "").toLowerCase
+
+  if (os.contains("win")) "win"
+  else if (os.contains("mac")) {
+    if (arch.contains("aarch64") || arch.contains("arm64")) "mac-aarch64" else "mac"
+  } else if (arch.contains("aarch64") || arch.contains("arm64")) "linux-aarch64"
+  else "linux"
+}
 
 lazy val root = (project in file("."))
   .settings(
-    name := "reynolds-boids-visualization"
+    name := "reynolds-boids-visualization",
+    Compile / mainClass := Some("io.codeswarm.boids.app.BoidSimulation"),
+    fork := true,
+    libraryDependencies ++= Seq(
+      "org.scalafx" %% "scalafx" % scalaFxVersion,
+      "org.openjfx" % "javafx-base" % javafxVersion classifier javafxPlatform,
+      "org.openjfx" % "javafx-graphics" % javafxVersion classifier javafxPlatform,
+      "org.openjfx" % "javafx-controls" % javafxVersion classifier javafxPlatform,
+      "org.scalanlp" %% "breeze" % breezeVersion,
+      "org.scalatest" %% "scalatest" % scalaTestVersion % Test
+    ),
+    scalacOptions ++= Seq(
+      "-deprecation",
+      "-feature",
+      "-unchecked",
+      "-Xlint"
+    ),
+    Test / parallelExecution := false
   )
-
-// Determine OS version of JavaFX binaries
-lazy val osName = System.getProperty("os.name") match {
-  case n if n.startsWith("Linux")   => "linux"
-  case n if n.startsWith("Mac")     => "mac"
-  case n if n.startsWith("Windows") => "win"
-  case _ => throw new Exception("Unknown platform!")
-}
-
-// Add dependency on JavaFX libraries, OS dependent
-lazy val javaFXModules = Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
-libraryDependencies ++= javaFXModules.map(m =>
-  "org.openjfx" % s"javafx-$m" % "16" classifier osName
-)
-
-libraryDependencies ++= Seq(
-  "org.scalafx" %% "scalafx" % "15.0.1-R21",
-  "org.scalanlp" %% "breeze" % "2.1.0",
-  "org.scalatest" %% "scalatest" % "3.2.19" % Test
-)
