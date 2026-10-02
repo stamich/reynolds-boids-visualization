@@ -3,11 +3,11 @@ package io.codeswarm.boids.util
 import breeze.linalg.{DenseVector, norm}
 
 /** Small collection of safe vector operations used by the boids implementation.
- *
- * Breeze is intentionally retained in milestone 0.1.1 to avoid changing the baseline representation. Replacing it
- * with a dedicated lightweight `Vector2` type is reserved for milestone 0.2, where it can be measured and reviewed as
- * an explicit architectural change.
- */
+  *
+  * Breeze is intentionally retained in milestone 0.1.1 to avoid changing the baseline representation. Replacing it with
+  * a dedicated lightweight `Vector2` type is reserved for milestone 0.2, where it can be measured and reviewed as an
+  * explicit architectural change.
+  */
 object VectorOperations {
 
   /** Returns the Euclidean magnitude of a vector. */
@@ -21,10 +21,10 @@ object VectorOperations {
   }
 
   /** Limits the magnitude of `vector` to `maximum` while preserving its direction.
-   *
-   * @throws IllegalArgumentException
-   * when `maximum` is negative
-   */
+    *
+    * @throws IllegalArgumentException
+    *   when `maximum` is negative
+    */
   def limit(vector: DenseVector[Double], maximum: Double): DenseVector[Double] = {
     require(maximum >= 0.0, "maximum must be non-negative")
     val currentMagnitude = magnitude(vector)
