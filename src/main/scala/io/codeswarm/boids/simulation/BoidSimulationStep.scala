@@ -5,21 +5,21 @@ import io.codeswarm.boids.model.{Boid, SimulationConfig}
 import io.codeswarm.boids.util.VectorOperations
 
 /** Advances the baseline boids simulation by one frame.
-  *
-  * All steering forces are computed from the same input flock before any updated state is returned. This avoids a
-  * frame-order dependency where boids processed later would otherwise observe already-updated neighbors.
-  */
+ *
+ * All steering forces are computed from the same input flock before any updated state is returned. This avoids a
+ * frame-order dependency where boids processed later would otherwise observe already-updated neighbors.
+ */
 object BoidSimulationStep {
 
   /** Produces the next immutable flock state.
-    *
-    * @param flock
-    *   current boids
-    * @param config
-    *   simulation parameters
-    * @return
-    *   updated boids after one simulation step
-    */
+   *
+   * @param flock
+   * current boids
+   * @param config
+   * simulation parameters
+   * @return
+   * updated boids after one simulation step
+   */
   def next(flock: IndexedSeq[Boid], config: SimulationConfig): IndexedSeq[Boid] =
     flock.map { boid =>
       val acceleration = BoidBehavior.flockingForce(boid, flock, config)

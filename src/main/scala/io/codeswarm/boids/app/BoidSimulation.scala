@@ -2,7 +2,6 @@ package io.codeswarm.boids.app
 
 import io.codeswarm.boids.model.{Boid, SimulationConfig}
 import io.codeswarm.boids.simulation.{BoidFactory, BoidSimulationStep}
-import scalafx.Includes._
 import scalafx.animation.AnimationTimer
 import scalafx.application.JFXApp3
 import scalafx.scene.Scene
@@ -10,10 +9,10 @@ import scalafx.scene.canvas.Canvas
 import scalafx.scene.paint.Color
 
 /** ScalaFX entry point for the Reynolds boids visualization.
-  *
-  * Milestone 0.1.1 keeps the renderer deliberately compact and close to the original prototype. Rendering and
-  * simulation will be separated behind explicit interfaces in milestone 0.2.
-  */
+ *
+ * Milestone 0.1.1 keeps the renderer deliberately compact and close to the original prototype. Rendering and
+ * simulation will be separated behind explicit interfaces in milestone 0.2.
+ */
 object BoidSimulation extends JFXApp3 {
 
   private val config = SimulationConfig.Default

@@ -5,18 +5,18 @@ import io.codeswarm.boids.model.{Boid, SimulationConfig}
 import io.codeswarm.boids.util.VectorOperations
 
 /** Implements the three classic local steering rules used by Craig Reynolds' boids model.
-  *
-  * The implementation intentionally performs a direct scan of all boids. This is the baseline O(n²) neighbor lookup
-  * retained for milestone 0.1.1. Spatial partitioning and performance-oriented data structures belong to a later
-  * milestone so their impact can be benchmarked against this reference implementation.
-  */
+ *
+ * The implementation intentionally performs a direct scan of all boids. This is the baseline O(n²) neighbor lookup
+ * retained for milestone 0.1.1. Spatial partitioning and performance-oriented data structures belong to a later
+ * milestone so their impact can be benchmarked against this reference implementation.
+ */
 object BoidBehavior {
 
   /** Computes short-range repulsion from nearby boids.
-    *
-    * Closer neighbors contribute more strongly than distant neighbors. The returned steering force is limited by the
-    * configured maximum force.
-    */
+   *
+   * Closer neighbors contribute more strongly than distant neighbors. The returned steering force is limited by the
+   * configured maximum force.
+   */
   def separation(boid: Boid, flock: IndexedSeq[Boid], config: SimulationConfig): DenseVector[Double] = {
     val contributions = flock.iterator
       .filterNot(_ eq boid)
@@ -71,10 +71,10 @@ object BoidBehavior {
   }
 
   private def steerFromAverage(
-      vectors: IndexedSeq[DenseVector[Double]],
-      currentVelocity: DenseVector[Double],
-      config: SimulationConfig
-  ): DenseVector[Double] = {
+                                vectors: IndexedSeq[DenseVector[Double]],
+                                currentVelocity: DenseVector[Double],
+                                config: SimulationConfig
+                              ): DenseVector[Double] = {
     if (vectors.isEmpty) zero
     else {
       val mean = average(vectors)

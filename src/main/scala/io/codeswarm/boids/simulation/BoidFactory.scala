@@ -9,12 +9,12 @@ import scala.util.Random
 object BoidFactory {
 
   /** Creates `config.boidCount` boids with random positions and velocities.
-    *
-    * @param config
-    *   simulation parameters
-    * @param random
-    *   random number source; injectable to keep unit tests reproducible
-    */
+   *
+   * @param config
+   * simulation parameters
+   * @param random
+   * random number source; injectable to keep unit tests reproducible
+   */
   def randomFlock(config: SimulationConfig, random: Random = new Random()): IndexedSeq[Boid] =
     Vector.fill(config.boidCount) {
       val position = DenseVector(random.nextDouble() * config.width, random.nextDouble() * config.height)
