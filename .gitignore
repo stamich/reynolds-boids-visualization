@@ -1,10 +1,9 @@
-target/
-project/target/
-project/project/
+.gradle/
+build/
+out/
+.idea/
+*.iml
 .bsp/
 .metals/
-.idea/
 .vscode/
-*.class
-*.log
 .DS_Store
