@@ -1,30 +1,28 @@
-# Release Checklist — 0.1.1
+# Release checklist — 0.2.0
 
-## Build
+Run from a clean checkout:
 
-- [ ] `sbt clean compile`
-- [ ] `sbt test`
-- [ ] `sbt scalafmtCheckAll scalafmtSbtCheck`
-- [ ] `sbt package`
+```bash
+gradle --version
+gradle clean spotlessCheck test
+gradle runHeadless
+gradle assembleDist
+```
 
-## Manual smoke test
+Manual desktop smoke test:
 
-- [ ] `sbt run` opens the ScalaFX window
-- [ ] boids are visible
-- [ ] boids move continuously
-- [ ] flocking behavior is visible
-- [ ] boids wrap correctly at every edge
-- [ ] application closes cleanly
+```bash
+gradle run
+```
 
-## Documentation
+Verify:
 
-- [ ] README describes version 0.1.1
-- [ ] ARCHITECTURE documents the actual 0.1.1 structure
-- [ ] ALGORITHM documents the three Reynolds rules
-- [ ] ROADMAP separates future work from the stabilization release
-- [ ] CHANGELOG contains 0.1 and 0.1.1 entries
-- [ ] LICENSE contains Apache License 2.0
-
-## CI
-
-- [ ] GitHub Actions workflow passes on the default branch
+- the window title reports 0.2.0,
+- boids move and flock,
+- separation/alignment/cohesion remain visually plausible,
+- screen wrapping works,
+- no NaN/Infinity behavior is visible,
+- `runHeadless` reports `finite=true`,
+- tests and formatting checks are green,
+- CI uses only Gradle commands,
+- no `build.sbt`, `project/plugins.sbt` or Breeze dependency remains.

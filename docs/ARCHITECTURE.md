@@ -1,68 +1,69 @@
-# Architecture — Milestone 0.1.1
+# Architecture — milestone 0.2.0
 
-## Goal
+## Goals
 
-Milestone 0.1.1 is a stabilization release, not a redesign. It preserves the original ScalaFX-based visualization and classic Reynolds behavior while making responsibilities easier to understand and test.
+Milestone 0.2 separates the simulation core from ScalaFX and from specific infrastructure implementations. The core can
+now run deterministically in tests, a command-line process or the desktop visualizer.
 
-## Packages
-
-### `io.codeswarm.boids.app`
-
-Contains the desktop application entry point and ScalaFX rendering loop.
-
-### `io.codeswarm.boids.model`
-
-Contains small data models:
-
-- `Boid` — position, velocity and acceleration,
-- `SimulationConfig` — validated simulation constants.
-
-### `io.codeswarm.boids.simulation`
-
-Contains baseline simulation logic:
-
-- `BoidBehavior` — separation, alignment and cohesion,
-- `BoidSimulationStep` — one-frame state transition and world wrapping,
-- `BoidFactory` — initial flock construction.
-
-### `io.codeswarm.boids.util`
-
-Contains Breeze-related numerical helpers in `VectorOperations`.
-
-## Runtime flow
+## Dependency direction
 
 ```text
-BoidSimulation (ScalaFX)
-        │
-        ├── BoidFactory.randomFlock
-        │
-        ▼
-current IndexedSeq[Boid]
-        │
-        ▼
-BoidSimulationStep.next
-        │
-        ├── BoidBehavior.separation
-        ├── BoidBehavior.alignment
-        └── BoidBehavior.cohesion
-        │
-        ▼
-next IndexedSeq[Boid]
-        │
-        ▼
-ScalaFX Canvas rendering
+app ───────────────► simulation ─────────► model/math
+ │                     │  │
+ │                     │  ├─────────────► behavior
+ │                     │  ├─────────────► neighbor
+ │                     │  └─────────────► boundary
+ │
+ └──────────────────► rendering ─────────► model
+                          │
+                          └──────────────► ScalaFX
 ```
 
-## Deliberate limitations
+The domain and simulation packages never import ScalaFX.
 
-The following are intentionally left unchanged or deferred:
+## Core state
 
-- neighbor search remains O(n²),
-- Breeze remains the vector representation,
-- the visualization is still hosted directly by the application,
-- there is no generic renderer interface,
-- there is no `SpatialIndex`,
-- there is no JMH module,
-- there are no predators, obstacles or additional steering behaviors.
+`SimulationState` is immutable. Every call to `SimulationEngine.step` reads the same snapshot and produces a complete
+new state. There are no partially updated neighbors.
 
-These limitations make 0.1.1 useful as a reference point for later architectural and performance work.
+## Vector model
+
+Breeze is removed. `Vector2` is deliberately small and domain-specific. It supports magnitude, normalization, limiting,
+dot products and distance operations needed by flocking.
+
+## Steering
+
+`SteeringBehavior` is a pure strategy. `Separation`, `Alignment`, and `Cohesion` implement the classic rules.
+`CompositeSteeringBehavior` applies explicit weights without coupling the engine to concrete behaviors.
+
+## Neighbor search
+
+`NeighborSearch` is the seam for milestone 0.3. `NaiveNeighborSearch` scans the flock and remains the correctness and
+performance baseline.
+
+## Boundaries
+
+`BoundaryPolicy` removes screen-edge logic from the engine. `WrapAroundBoundary` preserves the toroidal screen behavior
+from the baseline implementation.
+
+## Rendering
+
+`Renderer` consumes `SimulationState`; it cannot influence physics. `ScalaFxRenderer` is the only class in the rendering
+path that knows JavaFX/ScalaFX primitives.
+
+## Determinism
+
+`RandomSimulationInitializer` is seeded from `SimulationConfig`. Same config + same seed + same number of steps produces
+an identical trajectory.
+
+## Intentionally deferred
+
+- spatial hash / uniform grid,
+- quadtree,
+- JMH,
+- true toroidal neighbor distance across opposite screen edges,
+- obstacles and predators,
+- interactive control panel,
+- parallel simulation,
+- structure-of-arrays storage,
+- Scala 3 migration.
