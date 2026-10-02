@@ -1,70 +1,51 @@
-# Reynolds Boids Algorithm
+# Reynolds Boids Algorithm — milestone 0.2.0
 
-## Overview
+## State update
 
-The boids model produces flocking behavior from local interactions rather than from a central controller. Every boid responds only to nearby members of the flock.
+Every logical tick computes:
 
-Milestone 0.1.1 implements the three canonical steering rules.
+```text
+SimulationState(t)
+      │
+      ├─ find visible neighbors
+      ├─ compute weighted steering
+      ├─ velocity(t+1) = limit(velocity(t) + steering, maxSpeed)
+      └─ position(t+1) = boundary(position(t) + velocity(t+1))
+      │
+      ▼
+SimulationState(t+1)
+```
+
+All boids read only `SimulationState(t)`.
 
 ## Separation
 
-Separation prevents crowding. For every neighbor inside `separationRadius`, the boid computes a vector pointing away from that neighbor. Closer neighbors receive greater influence through inverse-distance weighting.
-
-Conceptually:
-
-```text
-separation(i) = Σ normalize(position(i) - position(j)) / distance(i, j)
-```
-
-The resulting desired velocity is converted to a steering force and limited by `maxForce`.
+For neighbors inside the separation radius, compute a direction away from the neighbor and weight it inversely by
+actual distance. The average contribution is converted into a desired velocity and then a limited steering force.
 
 ## Alignment
 
-Alignment tends to make nearby boids travel in the same direction.
-
-```text
-averageVelocity = average(velocity(neighbors))
-```
-
-The average velocity is normalized to `maxSpeed`, the current velocity is subtracted, and the resulting steering force is limited by `maxForce`.
+Average visible-neighbor velocities, normalize the result to `maxSpeed`, subtract current velocity, and limit to
+`maxForce`.
 
 ## Cohesion
 
-Cohesion moves a boid toward the local center of mass.
+Compute the mean visible-neighbor position and steer toward this local center of mass.
+
+## Weighted composition
 
 ```text
-center = average(position(neighbors))
-desired = center - position(i)
+F = ws * Fseparation + wa * Falignment + wc * Fcohesion
 ```
 
-The desired direction is converted to a velocity and then to a limited steering force.
+Weights are configuration values and the engine knows only the resulting `SteeringBehavior` abstraction.
 
-## Combined force
+## Neighbor complexity
 
-```text
-force =
-  separation * separationWeight +
-  alignment  * alignmentWeight +
-  cohesion   * cohesionWeight
-```
+`NaiveNeighborSearch` checks every boid for every query boid. A complete step therefore remains O(n²). This is
+intentional: milestone 0.3 will compare spatially indexed implementations against this baseline.
 
-## Position update
+## Numerical details
 
-For each frame:
-
-```text
-velocity(t+1) = limit(velocity(t) + force, maxSpeed)
-position(t+1) = wrap(position(t) + velocity(t+1))
-```
-
-All boids are calculated from the same previous-frame state before the next flock is returned.
-
-## Complexity
-
-Neighbor lookup in milestone 0.1.1 is intentionally naive: every boid scans the flock.
-
-```text
-N boids × N candidate neighbors = O(N²)
-```
-
-This provides a clear reference implementation for the spatial-index/JMH milestone planned later.
+Distance filters use squared distance when possible to avoid unnecessary square roots. `Vector2.normalized` handles the
+zero vector without NaN/Infinity, and speed/force limiting preserve direction.

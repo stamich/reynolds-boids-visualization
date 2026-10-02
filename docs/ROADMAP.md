@@ -1,54 +1,54 @@
 # Roadmap
 
-## 0.1 — Original baseline
+## 0.1
 
-Initial Scala/ScalaFX Reynolds boids visualization.
+Original Reynolds boids visualization prototype.
 
-## 0.1.1 — Stabilization
+## 0.1.1
 
-- modernize Scala/JDK/JavaFX/ScalaFX toolchain,
-- centralize baseline configuration,
-- improve numerical safety and code documentation,
-- extend unit/regression tests,
-- add Scalafmt,
-- migrate CI to GitHub Actions,
-- add Apache License 2.0,
-- document architecture and algorithm.
+Stabilized baseline: dependency refresh, tests, documentation, Apache-2.0 and GitHub Actions.
 
-## 0.2 — Architecture
+## 0.2.0 — architecture and Gradle migration
 
-Planned:
+- Gradle Kotlin DSL + Wrapper,
+- dedicated `Vector2`,
+- immutable `SimulationState`,
+- steering strategy hierarchy,
+- neighbor-search abstraction,
+- boundary abstraction,
+- deterministic initialization,
+- headless engine/runner,
+- renderer abstraction,
+- JUnit 5 tests.
 
-- separate simulation engine from ScalaFX rendering,
-- introduce renderer-neutral simulation state,
-- replace Breeze in the hot path with a lightweight `Vector2`,
-- formalize steering behaviors and boundary policies,
-- deterministic seeded simulation configuration,
-- headless simulation mode.
-
-## 0.3 — Spatial indexing and benchmarks
+## 0.3 — spatial indexing and benchmarks
 
 Planned:
 
-- `SpatialIndex` abstraction,
-- naive reference implementation,
-- uniform grid/spatial hash,
-- quadtree experiment,
-- JMH benchmark module,
-- JSON benchmark results,
-- regression comparison between milestones.
+- `UniformGridNeighborSearch`,
+- optional quadtree comparison,
+- JMH module,
+- `Naive` vs `UniformGrid` performance comparison,
+- JSON benchmark output,
+- workload sizes from hundreds to tens of thousands of boids,
+- allocation/GC observations.
 
-## 0.4 — Interactive visualization
+## 0.4 — interactive visualization
 
 Planned:
 
-- live parameter controls,
-- pause/resume/single-step,
-- debug vectors,
-- perception-radius visualization,
-- neighbor highlighting,
-- trails and simulation metrics.
+- live sliders for behavior weights/radii,
+- pause/resume/single-step/reset,
+- selected-boid debug view,
+- velocity/force vectors,
+- neighbor/perception visualization,
+- trails and FPS/step-time overlay.
 
 ## Later milestones
 
-Candidates include obstacles, attractors/repulsors, predators, multiple species, richer metrics, parallel update strategies, structure-of-arrays experiments, Scala 3 migration and eventually 3D/GPU experiments.
+- obstacles, attractors and repulsors,
+- predators and multi-species systems,
+- simulation metrics and replay,
+- parallel/SoA experiments,
+- Scala 3 evaluation,
+- optional 3D/GPU experiments.

@@ -1,45 +1,72 @@
 # Reynolds Boids Visualization
 
-A two-dimensional Scala/ScalaFX visualization of Craig Reynolds' classic boids flocking model.
+A Scala/ScalaFX implementation of Craig Reynolds' classic flocking model.
 
-Milestone **0.1.1** is a stabilization release based on the original 0.1 implementation. It keeps the classic three-rule simulation intact while modernizing the build, documenting the code, strengthening tests and moving CI to GitHub Actions.
+Milestone **0.2.0** is the first architectural release after the stabilized 0.1.1 baseline. It preserves the classic
+separation/alignment/cohesion behavior while decoupling simulation, rendering and infrastructure concerns.
 
-## Features
+## Highlights of 0.2.0
 
-- classic Reynolds flocking rules:
-  - **separation** — avoid crowding nearby boids,
-  - **alignment** — steer toward the average local heading,
-  - **cohesion** — steer toward the local center of mass,
-- toroidal screen wrapping,
-- ScalaFX visualization,
-- centralized simulation parameters,
-- deterministic factory support for tests,
-- ScalaTest regression and behavior tests,
-- Scalafmt formatting checks,
-- GitHub Actions CI.
+- migrated build from **sbt to Gradle 9.8.0 / Kotlin DSL**,
+- replaced Breeze with a dedicated immutable `Vector2`,
+- introduced immutable `SimulationState`,
+- separated steering rules behind `SteeringBehavior`,
+- introduced weighted behavior composition,
+- separated neighbor discovery behind `NeighborSearch`,
+- retained `NaiveNeighborSearch` as the O(n²) reference baseline,
+- separated world boundaries behind `BoundaryPolicy`,
+- deterministic initialization through `SimulationConfig.seed`,
+- introduced `SimulationEngine` and `SimulationRunner`,
+- added renderer abstraction and a ScalaFX implementation,
+- added a dependency-free headless execution mode,
+- migrated tests to JUnit 5 for native Gradle test discovery,
+- formatting is enforced by Spotless + Scalafmt,
+- CI builds and tests through GitHub Actions.
 
-## Technology
+## Requirements
 
-- JDK 21
-- Scala 2.13.18
-- ScalaFX 21.0.0-R32
-- JavaFX 21.0.8
-- Breeze 2.1.0
-- ScalaTest 3.2.19
-- sbt 1.11.7
+- JDK 21+ to compile and run the application,
+- Gradle 9.8.0 (the build contains a pinned `wrapper` task; run `gradle wrapper` once if you want local wrapper scripts).
 
-ScalaFX remains the UI layer and Breeze remains the vector representation in 0.1.1. Replacing Breeze with a lightweight `Vector2`, separating the renderer from the simulation engine and introducing a `SpatialIndex` are intentionally postponed to later milestones so 0.1.1 remains a reliable baseline.
+Gradle 9.8.0 can itself run on current JDKs including Java 22; compilation is pinned to a JDK 21 toolchain.
 
-## Running
-
-Requirements:
-
-- JDK 21
-- sbt
+## Build
 
 ```bash
-sbt clean test
-sbt run
+gradle clean build
+```
+
+## Run the ScalaFX visualization
+
+```bash
+gradle run
+```
+
+## Headless simulation
+
+```bash
+gradle runHeadless
+```
+
+or pass custom arguments directly to the headless main class:
+
+```bash
+gradle classes
+gradle -q runHeadless
+```
+
+The built-in smoke task uses:
+
+```text
+--boids 250 --steps 500 --seed 42
+```
+
+The CLI entry point supports:
+
+```text
+--boids <positive integer>
+--steps <non-negative integer>
+--seed <long>
 ```
 
 ## Formatting
@@ -47,61 +74,106 @@ sbt run
 Check formatting:
 
 ```bash
-sbt scalafmtCheckAll scalafmtSbtCheck
+gradle spotlessCheck
 ```
 
-Format the project:
+Apply formatting:
 
 ```bash
-sbt scalafmtAll scalafmtSbt
+gradle spotlessApply
 ```
+
+## Architecture
+
+```text
+                     ┌────────────────────┐
+                     │  BoidApplication   │
+                     └─────────┬──────────┘
+                               │
+                     ┌─────────▼──────────┐
+                     │ SimulationEngine   │
+                     └──────┬───────┬─────┘
+                            │       │
+                 ┌──────────▼──┐ ┌──▼──────────┐
+                 │  Steering   │ │ Boundary    │
+                 │  Behavior   │ │ Policy      │
+                 └──────┬──────┘ └─────────────┘
+                        │
+                 ┌──────▼──────────┐
+                 │ NeighborSearch  │
+                 └─────────────────┘
+
+                     SimulationState
+                          │
+                ┌─────────┴─────────┐
+                │                   │
+          Headless runner        Renderer
+                                    │
+                              ScalaFxRenderer
+```
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for details.
 
 ## Project structure
 
 ```text
 src/main/scala/io/codeswarm/boids/
 ├── app/
-│   └── BoidSimulation.scala
+│   ├── BoidApplication.scala
+│   └── HeadlessApplication.scala
+├── behavior/
+│   ├── SteeringBehavior.scala
+│   ├── SteeringMath.scala
+│   ├── Separation.scala
+│   ├── Alignment.scala
+│   ├── Cohesion.scala
+│   └── CompositeSteeringBehavior.scala
+├── boundary/
+│   ├── BoundaryPolicy.scala
+│   └── WrapAroundBoundary.scala
+├── math/
+│   └── Vector2.scala
 ├── model/
 │   ├── Boid.scala
-│   └── SimulationConfig.scala
-├── simulation/
-│   ├── BoidBehavior.scala
-│   ├── BoidFactory.scala
-│   └── BoidSimulationStep.scala
-└── util/
-    └── VectorOperations.scala
+│   ├── BoidId.scala
+│   ├── SimulationConfig.scala
+│   └── SimulationState.scala
+├── neighbor/
+│   ├── NeighborSearch.scala
+│   └── NaiveNeighborSearch.scala
+├── rendering/
+│   ├── Renderer.scala
+│   └── scalafx/ScalaFxRenderer.scala
+└── simulation/
+    ├── SimulationInitializer.scala
+    ├── SimulationEngine.scala
+    ├── SimulationRunner.scala
+    └── SimulationComponents.scala
 ```
-
-The 0.1.1 structure is deliberately compact. The simulation and renderer are not yet split into separate modules because that refactor is planned for 0.2.
 
 ## Algorithm
 
-For each boid, the simulation computes three steering contributions:
+The three classic Reynolds rules remain unchanged conceptually:
 
 ```text
 steering =
     separation * separationWeight +
-    alignment  * alignmentWeight +
+    alignment  * alignmentWeight  +
     cohesion   * cohesionWeight
 ```
 
-The current implementation scans the complete flock when finding neighbors. That gives a simple and easy-to-review **O(n²)** baseline that later spatial-index implementations can be benchmarked against.
-
-See [docs/ALGORITHM.md](docs/ALGORITHM.md) for details.
+The complete flock is still scanned to find neighbors. The O(n²) behavior is intentional in 0.2 because milestone 0.3
+will introduce spatial indexing and JMH benchmarks against this reference implementation.
 
 ## Documentation
 
 - [Algorithm](docs/ALGORITHM.md)
 - [Architecture](docs/ARCHITECTURE.md)
+- [Implementation tasks](docs/IMPLEMENTATION_TASKS.md)
+- [Headless mode](docs/HEADLESS_MODE.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Release checklist](docs/RELEASE_CHECKLIST.md)
-- [Implementation tasks](docs/IMPLEMENTATION_TASKS.md)
 - [Changelog](CHANGELOG.md)
-
-## CI
-
-`.github/workflows/ci.yml` checks formatting, compiles the code, runs the test suite and builds the package on JDK 21.
 
 ## License
 
