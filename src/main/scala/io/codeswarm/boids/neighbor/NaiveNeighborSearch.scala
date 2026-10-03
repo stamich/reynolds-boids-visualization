@@ -11,15 +11,13 @@ final class NaiveNeighborSearch extends NeighborSearch {
 
   /** Captures the immutable flock snapshot in a simple linear-scan index. */
   override def index(flock: IndexedSeq[Boid], world: WorldConfig): NeighborIndex =
-    new NeighborIndex {
-      override def neighborsOf(boid: Boid, radius: Double): IndexedSeq[Boid] = {
-        require(radius > 0.0, "radius must be positive")
-        val radiusSquared = radius * radius
-        flock.filter { other =>
-          other.id != boid.id && {
-            val distanceSquared = boid.position.distanceSquaredTo(other.position)
-            distanceSquared > 0.0 && distanceSquared < radiusSquared
-          }
+    (boid: Boid, radius: Double) => {
+      require(radius > 0.0, "radius must be positive")
+      val radiusSquared = radius * radius
+      flock.filter { other =>
+        other.id != boid.id && {
+          val distanceSquared = boid.position.distanceSquaredTo(other.position)
+          distanceSquared > 0.0 && distanceSquared < radiusSquared
         }
       }
     }
