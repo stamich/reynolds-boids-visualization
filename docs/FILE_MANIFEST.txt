@@ -1,3 +1,5 @@
+# File manifest — reynolds-boids-visualization 0.3.0
+
 .github/workflows/ci.yml
 .gitignore
 .scalafmt.conf
@@ -5,16 +7,24 @@ CHANGELOG.md
 LICENSE
 NOTICE
 README.md
+benchmark.sh
+benchmark/benchmark-contract-0.3.0.json
+benchmark/results/.gitkeep
 build.gradle.kts
 docs/ALGORITHM.md
 docs/ARCHITECTURE.md
+docs/BENCHMARKS.md
 docs/HEADLESS_MODE.md
 docs/IMPLEMENTATION_TASKS.md
 docs/MIGRATION_FROM_0.1.1.md
+docs/MIGRATION_FROM_0.2.0.md
 docs/RELEASE_CHECKLIST.md
 docs/ROADMAP.md
 gradle.properties
 settings.gradle.kts
+src/jmh/java/io/codeswarm/boids/benchmark/BenchmarkFixtures.java
+src/jmh/java/io/codeswarm/boids/benchmark/NeighborSearchBenchmark.java
+src/jmh/java/io/codeswarm/boids/benchmark/SimulationStepBenchmark.java
 src/main/scala/io/codeswarm/boids/app/BoidApplication.scala
 src/main/scala/io/codeswarm/boids/app/HeadlessApplication.scala
 src/main/scala/io/codeswarm/boids/behavior/Alignment.scala
@@ -32,6 +42,8 @@ src/main/scala/io/codeswarm/boids/model/SimulationConfig.scala
 src/main/scala/io/codeswarm/boids/model/SimulationState.scala
 src/main/scala/io/codeswarm/boids/neighbor/NaiveNeighborSearch.scala
 src/main/scala/io/codeswarm/boids/neighbor/NeighborSearch.scala
+src/main/scala/io/codeswarm/boids/neighbor/NeighborSearchStrategy.scala
+src/main/scala/io/codeswarm/boids/neighbor/UniformGridNeighborSearch.scala
 src/main/scala/io/codeswarm/boids/rendering/Renderer.scala
 src/main/scala/io/codeswarm/boids/rendering/scalafx/ScalaFxRenderer.scala
 src/main/scala/io/codeswarm/boids/simulation/SimulationComponents.scala
@@ -44,6 +56,10 @@ src/test/scala/io/codeswarm/boids/boundary/WrapAroundBoundaryTest.scala
 src/test/scala/io/codeswarm/boids/math/Vector2Test.scala
 src/test/scala/io/codeswarm/boids/model/SimulationConfigTest.scala
 src/test/scala/io/codeswarm/boids/neighbor/NaiveNeighborSearchTest.scala
+src/test/scala/io/codeswarm/boids/neighbor/NeighborSearchStrategyTest.scala
+src/test/scala/io/codeswarm/boids/neighbor/UniformGridNeighborSearchTest.scala
+src/test/scala/io/codeswarm/boids/rendering/scalafx/JavaFxRuntimeDependencyTest.scala
+src/test/scala/io/codeswarm/boids/simulation/NeighborSearchEngineEquivalenceTest.scala
 src/test/scala/io/codeswarm/boids/simulation/SimulationEngineTest.scala
 src/test/scala/io/codeswarm/boids/simulation/SimulationInitializerTest.scala
 src/test/scala/io/codeswarm/boids/simulation/SimulationRunnerTest.scala

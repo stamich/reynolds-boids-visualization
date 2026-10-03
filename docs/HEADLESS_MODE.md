@@ -1,33 +1,43 @@
 # Headless mode
 
-Milestone 0.2 can execute the complete flocking model without initializing JavaFX.
+The simulation core does not require JavaFX.
 
-## Purpose
-
-Headless execution supports:
-
-- deterministic regression tests,
-- CI smoke tests,
-- future benchmarks,
-- data/metric generation without rendering overhead.
-
-## Gradle smoke task
+The standard smoke task uses the uniform-grid strategy:
 
 ```bash
-./gradlew runHeadless
+gradle runHeadless
 ```
 
-The task executes 250 boids for 500 ticks with seed 42.
+The matching naive baseline task is:
 
-## Output
+```bash
+gradle runHeadlessNaive
+```
 
-The application prints:
+Configured arguments are:
 
 ```text
-tick=500
-boids=250
-averageSpeed=<value>
-finite=true
+--boids 250 --steps 500 --seed 42 --neighbor grid
 ```
 
-No JavaFX window or graphics toolkit is initialized.
+Supported strategies:
+
+```text
+naive
+  Reference full-flock linear scan.
+
+grid
+  Uniform-grid spatial index; default in milestone 0.3.
+```
+
+Headless output includes:
+
+```text
+tick
+boids
+neighborSearch
+averageSpeed
+finite
+```
+
+A fixed seed produces reproducible initialization and deterministic execution for the same strategy and configuration.

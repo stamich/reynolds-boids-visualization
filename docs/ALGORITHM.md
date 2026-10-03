@@ -1,51 +1,83 @@
-# Reynolds Boids Algorithm — milestone 0.2.0
+# Algorithm — Milestone 0.3.0
 
-## State update
+## Reynolds steering rules
 
-Every logical tick computes:
+The behavioral model remains the classic weighted combination:
 
 ```text
-SimulationState(t)
-      │
-      ├─ find visible neighbors
-      ├─ compute weighted steering
-      ├─ velocity(t+1) = limit(velocity(t) + steering, maxSpeed)
-      └─ position(t+1) = boundary(position(t) + velocity(t+1))
-      │
-      ▼
-SimulationState(t+1)
+steering =
+    separation * separationWeight +
+    alignment  * alignmentWeight  +
+    cohesion   * cohesionWeight
 ```
 
-All boids read only `SimulationState(t)`.
+Milestone 0.3 changes how neighbors are discovered, not the steering equations.
 
 ## Separation
 
-For neighbors inside the separation radius, compute a direction away from the neighbor and weight it inversely by
-actual distance. The average contribution is converted into a desired velocity and then a limited steering force.
+For neighbors inside `separationRadius`, the boid accumulates vectors pointing away from neighbors with stronger
+contribution at shorter distance. The average desired direction is converted into a limited steering force.
 
 ## Alignment
 
-Average visible-neighbor velocities, normalize the result to `maxSpeed`, subtract current velocity, and limit to
-`maxForce`.
+The boid computes the average velocity of visible neighbors and steers its velocity toward that local average heading.
 
 ## Cohesion
 
-Compute the mean visible-neighbor position and steer toward this local center of mass.
+The boid computes the center of mass of visible neighbors and steers toward that point.
 
-## Weighted composition
+## Neighborhood predicate
+
+Both the naive and grid implementations use the same strict predicate:
 
 ```text
-F = ws * Fseparation + wa * Falignment + wc * Fcohesion
+other.id != boid.id
+0 < distanceSquared(boid, other) < radius²
 ```
 
-Weights are configuration values and the engine knows only the resulting `SteeringBehavior` abstraction.
+Using squared distance avoids an unnecessary square root during filtering.
 
-## Neighbor complexity
+## Naive neighborhood search
 
-`NaiveNeighborSearch` checks every boid for every query boid. A complete step therefore remains O(n²). This is
-intentional: milestone 0.3 will compare spatially indexed implementations against this baseline.
+For every boid, every other boid is considered. A complete tick is therefore O(n²).
 
-## Numerical details
+## Uniform-grid neighborhood search
 
-Distance filters use squared distance when possible to avoid unnecessary square roots. `Vector2.normalized` handles the
-zero vector without NaN/Infinity, and speed/force limiting preserve direction.
+### Build phase
+
+Each boid is assigned to one square cell:
+
+```text
+cellX = floor(position.x / cellSize)
+cellY = floor(position.y / cellSize)
+```
+
+Building the map is O(n).
+
+### Query phase
+
+The query computes the number of cells intersecting the requested radius:
+
+```text
+extent = ceil(radius / cellSize)
+```
+
+Only buckets in that local rectangular cell window are visited. Each candidate still undergoes the exact distance
+predicate, so the grid changes candidate selection only and does not approximate the Reynolds radius.
+
+### Expected behavior
+
+If density remains approximately bounded while world area and flock size scale together, local candidate work can stay
+close to constant per boid. In the fixed-size desktop world, density rises with flock size, so the practical complexity
+is workload-dependent; JMH results should therefore be treated as measured evidence rather than assuming ideal O(n).
+
+## Integration
+
+For each boid:
+
+```text
+newVelocity = limit(oldVelocity + steering, maxSpeed)
+newPosition = boundary(oldPosition + newVelocity)
+```
+
+All updates read from `SimulationState(t)` and are published together as `SimulationState(t + 1)`.

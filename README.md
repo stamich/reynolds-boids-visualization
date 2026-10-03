@@ -169,7 +169,6 @@ will introduce spatial indexing and JMH benchmarks against this reference implem
 
 - [Algorithm](docs/ALGORITHM.md)
 - [Architecture](docs/ARCHITECTURE.md)
-- [Implementation tasks](docs/IMPLEMENTATION_TASKS.md)
 - [Headless mode](docs/HEADLESS_MODE.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Release checklist](docs/RELEASE_CHECKLIST.md)

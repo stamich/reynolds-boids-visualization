@@ -10,10 +10,10 @@ Stabilized baseline: dependency refresh, tests, documentation, Apache-2.0 and Gi
 
 ## 0.2.0 — architecture and Gradle migration
 
-- Gradle Kotlin DSL + Wrapper,
+- Gradle Kotlin DSL,
 - dedicated `Vector2`,
 - immutable `SimulationState`,
-- steering strategy hierarchy,
+- steering behavior hierarchy,
 - neighbor-search abstraction,
 - boundary abstraction,
 - deterministic initialization,
@@ -21,34 +21,47 @@ Stabilized baseline: dependency refresh, tests, documentation, Apache-2.0 and Gi
 - renderer abstraction,
 - JUnit 5 tests.
 
-## 0.3 — spatial indexing and benchmarks
+## 0.3.0 — spatial indexing and JMH
 
-Planned:
+Implemented:
 
+- `NeighborIndex` prepared once per simulation tick,
+- `NaiveNeighborSearch` baseline,
 - `UniformGridNeighborSearch`,
-- optional quadtree comparison,
-- JMH module,
-- `Naive` vs `UniformGrid` performance comparison,
+- selectable `naive` / `grid` headless strategies,
+- JMH 1.37 integration,
+- prepared-query and complete-step benchmarks,
 - JSON benchmark output,
-- workload sizes from hundreds to tens of thousands of boids,
-- allocation/GC observations.
+- correctness equivalence tests,
+- JavaFX `media` runtime dependency fix and regression test.
 
 ## 0.4 — interactive visualization
 
 Planned:
 
-- live sliders for behavior weights/radii,
+- live sliders for behavior weights and radii,
 - pause/resume/single-step/reset,
 - selected-boid debug view,
-- velocity/force vectors,
+- velocity and steering vectors,
 - neighbor/perception visualization,
+- spatial-grid overlay,
 - trails and FPS/step-time overlay.
+
+## 0.5 — advanced environment
+
+Planned:
+
+- obstacles,
+- attractors and repulsors,
+- seek/flee/arrive behaviors,
+- optional predators.
 
 ## Later milestones
 
-- obstacles, attractors and repulsors,
-- predators and multi-species systems,
-- simulation metrics and replay,
+- multi-species systems,
+- flow/flock metrics and replay,
+- true toroidal neighbor metric,
+- quadtree comparison,
 - parallel/SoA experiments,
 - Scala 3 evaluation,
 - optional 3D/GPU experiments.
