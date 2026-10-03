@@ -3,30 +3,24 @@ package io.codeswarm.boids.simulation
 import io.codeswarm.boids.behavior.{SteeringBehavior, SteeringContext}
 import io.codeswarm.boids.boundary.BoundaryPolicy
 import io.codeswarm.boids.math.Vector2
+import io.codeswarm.boids.metrics.SpatialMetrics
 import io.codeswarm.boids.model.{Boid, SimulationConfig, SimulationState}
-import io.codeswarm.boids.neighbor.NeighborSearch
+import io.codeswarm.boids.neighbor.{InstrumentedNeighborIndex, NeighborSearch}
+
+/** Result of one simulation tick with optional diagnostic information. */
+final case class SimulationStepResult(state: SimulationState, spatialMetrics: Option[SpatialMetrics])
 
 /** Advances immutable simulation snapshots. */
 trait SimulationEngine {
 
   /** Advances `state` by exactly one logical simulation tick. */
-  def step(state: SimulationState): SimulationState
+  def step(state: SimulationState): SimulationState = stepDetailed(state).state
+
+  /** Advances `state` and returns diagnostics produced by the tick. */
+  def stepDetailed(state: SimulationState): SimulationStepResult
 }
 
-/** Default Reynolds boids engine.
-  *
-  * Every boid reads the same immutable `SimulationState(t)` snapshot and all resulting boids are published together as `SimulationState(t + 1)`. The configured
-  * `NeighborSearch` prepares one index for that snapshot and all boid queries reuse it during the tick.
-  *
-  * @param config
-  *   simulation configuration
-  * @param steering
-  *   composite steering behavior
-  * @param neighborSearch
-  *   neighbor-index construction strategy
-  * @param boundaryPolicy
-  *   world-boundary behavior
-  */
+/** Default Reynolds boids engine using snapshot semantics. */
 final class DefaultSimulationEngine(
     config: SimulationConfig,
     steering: SteeringBehavior,
@@ -37,7 +31,7 @@ final class DefaultSimulationEngine(
   private val steeringContext = SteeringContext(config.flock.maxSpeed, config.flock.maxForce)
 
   /** Computes the next state from the current immutable flock snapshot. */
-  override def step(state: SimulationState): SimulationState = {
+  override def stepDetailed(state: SimulationState): SimulationStepResult = {
     val currentFlock = state.boids
     val perceptionRadius = config.behavior.perceptionRadius
     val neighborIndex = neighborSearch.index(currentFlock, config.world)
@@ -48,7 +42,11 @@ final class DefaultSimulationEngine(
       integrate(boid, force)
     }
 
-    SimulationState(state.tick + 1L, nextBoids)
+    val metrics = neighborIndex match {
+      case instrumented: InstrumentedNeighborIndex => Some(instrumented.spatialMetrics)
+      case _ => None
+    }
+    SimulationStepResult(SimulationState(state.tick + 1L, nextBoids), metrics)
   }
 
   /** Applies steering, speed limiting and the configured boundary policy to one boid. */

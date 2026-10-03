@@ -1,0 +1,796 @@
+[
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.NeighborSearchBenchmark.naiveQueries",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "100"
+        },
+        "primaryMetric" : {
+            "score" : 0.042027129888653994,
+            "scoreError" : 0.0012775381758316356,
+            "scoreConfidence" : [
+                0.04074959171282236,
+                0.04330466806448563
+            ],
+            "scorePercentiles" : {
+                "0.0" : 0.04137968546485167,
+                "50.0" : 0.0417166876411425,
+                "90.0" : 0.04398710953647501,
+                "95.0" : 0.044113888589952806,
+                "99.0" : 0.044113888589952806,
+                "99.9" : 0.044113888589952806,
+                "99.99" : 0.044113888589952806,
+                "99.999" : 0.044113888589952806,
+                "99.9999" : 0.044113888589952806,
+                "100.0" : 0.044113888589952806
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    0.04149084542626011,
+                    0.04188257765587706,
+                    0.041635267421530266,
+                    0.04179810786075473,
+                    0.04202941854015212
+                ],
+                [
+                    0.04137968546485167,
+                    0.04284609805517478,
+                    0.044113888589952806,
+                    0.04160996717423864,
+                    0.04148544269774773
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.NeighborSearchBenchmark.naiveQueries",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "1000"
+        },
+        "primaryMetric" : {
+            "score" : 4.323976744939587,
+            "scoreError" : 0.15624707846548924,
+            "scoreConfidence" : [
+                4.167729666474099,
+                4.480223823405076
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4.163695360995851,
+                "50.0" : 4.3162100991379315,
+                "90.0" : 4.458333519486725,
+                "95.0" : 4.46157556,
+                "99.0" : 4.46157556,
+                "99.9" : 4.46157556,
+                "99.99" : 4.46157556,
+                "99.999" : 4.46157556,
+                "99.9999" : 4.46157556,
+                "100.0" : 4.46157556
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    4.4291551548672565,
+                    4.403706074561404,
+                    4.3107863476394845,
+                    4.319548103448276,
+                    4.409346026431718
+                ],
+                [
+                    4.312872094827586,
+                    4.46157556,
+                    4.2500870974576275,
+                    4.163695360995851,
+                    4.178995629166667
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.NeighborSearchBenchmark.naiveQueries",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "5000"
+        },
+        "primaryMetric" : {
+            "score" : 131.3537005097222,
+            "scoreError" : 5.160691254488096,
+            "scoreConfidence" : [
+                126.19300925523409,
+                136.51439176421027
+            ],
+            "scorePercentiles" : {
+                "0.0" : 124.34884722222222,
+                "50.0" : 132.6802025625,
+                "90.0" : 134.669693925,
+                "95.0" : 134.6999425,
+                "99.0" : 134.6999425,
+                "99.9" : 134.6999425,
+                "99.99" : 134.6999425,
+                "99.999" : 134.6999425,
+                "99.9999" : 134.6999425,
+                "100.0" : 134.6999425
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    124.34884722222222,
+                    131.963006,
+                    129.69885525,
+                    128.597637625,
+                    128.63130925
+                ],
+                [
+                    133.397399125,
+                    133.724259125,
+                    134.07829225,
+                    134.39745675,
+                    134.6999425
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.NeighborSearchBenchmark.uniformGridQueries",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "100"
+        },
+        "primaryMetric" : {
+            "score" : 0.021947174769045442,
+            "scoreError" : 4.1541199400933743E-4,
+            "scoreConfidence" : [
+                0.021531762775036104,
+                0.02236258676305478
+            ],
+            "scorePercentiles" : {
+                "0.0" : 0.021604965545546844,
+                "50.0" : 0.02191177860999597,
+                "90.0" : 0.02254069740463456,
+                "95.0" : 0.02258661979719506,
+                "99.0" : 0.02258661979719506,
+                "99.9" : 0.02258661979719506,
+                "99.99" : 0.02258661979719506,
+                "99.999" : 0.02258661979719506,
+                "99.9999" : 0.02258661979719506,
+                "100.0" : 0.02258661979719506
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    0.02173660550279269,
+                    0.021604965545546844,
+                    0.02258661979719506,
+                    0.02212739587159008,
+                    0.02194980866893449
+                ],
+                [
+                    0.02175001911492878,
+                    0.02198095936353047,
+                    0.02205475190738699,
+                    0.021873748551057455,
+                    0.021806873367491552
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.NeighborSearchBenchmark.uniformGridQueries",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "1000"
+        },
+        "primaryMetric" : {
+            "score" : 1.412880825173171,
+            "scoreError" : 0.032924735261372934,
+            "scoreConfidence" : [
+                1.3799560899117982,
+                1.445805560434544
+            ],
+            "scorePercentiles" : {
+                "0.0" : 1.391332909596662,
+                "50.0" : 1.4082683220072898,
+                "90.0" : 1.4635404597118342,
+                "95.0" : 1.4679782580645162,
+                "99.0" : 1.4679782580645162,
+                "99.9" : 1.4679782580645162,
+                "99.99" : 1.4679782580645162,
+                "99.999" : 1.4679782580645162,
+                "99.9999" : 1.4679782580645162,
+                "100.0" : 1.4679782580645162
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    1.4154205134370579,
+                    1.4074287496483826,
+                    1.4021738053221289,
+                    1.4679782580645162,
+                    1.4236002745376957
+                ],
+                [
+                    1.4091078943661972,
+                    1.4145050381355933,
+                    1.3923208942976355,
+                    1.4049399143258428,
+                    1.391332909596662
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.NeighborSearchBenchmark.uniformGridQueries",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "5000"
+        },
+        "primaryMetric" : {
+            "score" : 31.264940266382574,
+            "scoreError" : 0.4899278058445656,
+            "scoreConfidence" : [
+                30.775012460538008,
+                31.75486807222714
+            ],
+            "scorePercentiles" : {
+                "0.0" : 30.875175727272726,
+                "50.0" : 31.226320348484848,
+                "90.0" : 31.975588856250003,
+                "95.0" : 32.03942871875,
+                "99.0" : 32.03942871875,
+                "99.9" : 32.03942871875,
+                "99.99" : 32.03942871875,
+                "99.999" : 32.03942871875,
+                "99.9999" : 32.03942871875,
+                "100.0" : 32.03942871875
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    31.18641690909091,
+                    32.03942871875,
+                    31.3465281875,
+                    30.87642484848485,
+                    30.875175727272726
+                ],
+                [
+                    31.40103009375,
+                    31.28743790625,
+                    31.20296278787879,
+                    31.184319575757577,
+                    31.24967790909091
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.SimulationStepBenchmark.naiveStep",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "100"
+        },
+        "primaryMetric" : {
+            "score" : 0.05843522295957637,
+            "scoreError" : 8.044224685495059E-4,
+            "scoreConfidence" : [
+                0.05763080049102687,
+                0.059239645428125876
+            ],
+            "scorePercentiles" : {
+                "0.0" : 0.05780984220565285,
+                "50.0" : 0.058260772781537476,
+                "90.0" : 0.05938587869099398,
+                "95.0" : 0.059417092496881124,
+                "99.0" : 0.059417092496881124,
+                "99.9" : 0.059417092496881124,
+                "99.99" : 0.059417092496881124,
+                "99.999" : 0.059417092496881124,
+                "99.9999" : 0.059417092496881124,
+                "100.0" : 0.059417092496881124
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    0.059417092496881124,
+                    0.05910495443800969,
+                    0.05836203413666336,
+                    0.05882827979061287,
+                    0.058529274461610485
+                ],
+                [
+                    0.05786930943701903,
+                    0.058127289533329456,
+                    0.0581446416695733,
+                    0.05780984220565285,
+                    0.058159511426411584
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.SimulationStepBenchmark.naiveStep",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "1000"
+        },
+        "primaryMetric" : {
+            "score" : 5.165120004236768,
+            "scoreError" : 0.7426378383829003,
+            "scoreConfidence" : [
+                4.422482165853868,
+                5.907757842619668
+            ],
+            "scorePercentiles" : {
+                "0.0" : 4.646681625,
+                "50.0" : 5.167358721153846,
+                "90.0" : 5.733315703741727,
+                "95.0" : 5.739958645714286,
+                "99.0" : 5.739958645714286,
+                "99.9" : 5.739958645714286,
+                "99.99" : 5.739958645714286,
+                "99.999" : 5.739958645714286,
+                "99.9999" : 5.739958645714286,
+                "100.0" : 5.739958645714286
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    4.727274278301887,
+                    4.6817085,
+                    4.652824395348837,
+                    4.817330903846154,
+                    4.646681625
+                ],
+                [
+                    5.673529225988701,
+                    5.517386538461539,
+                    5.65852781920904,
+                    5.535978110497237,
+                    5.739958645714286
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.SimulationStepBenchmark.naiveStep",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "5000"
+        },
+        "primaryMetric" : {
+            "score" : 145.51552931071427,
+            "scoreError" : 3.205464160455835,
+            "scoreConfidence" : [
+                142.31006515025842,
+                148.72099347117012
+            ],
+            "scorePercentiles" : {
+                "0.0" : 142.27303225,
+                "50.0" : 145.64529042857143,
+                "90.0" : 148.7492884,
+                "95.0" : 148.850235,
+                "99.0" : 148.850235,
+                "99.9" : 148.850235,
+                "99.99" : 148.850235,
+                "99.999" : 148.850235,
+                "99.9999" : 148.850235,
+                "100.0" : 148.850235
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    144.0809867142857,
+                    147.15438842857142,
+                    142.27303225,
+                    143.05353857142856,
+                    145.76817271428573
+                ],
+                [
+                    145.52240814285713,
+                    144.19680357142857,
+                    147.840769,
+                    148.850235,
+                    146.41495871428572
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.SimulationStepBenchmark.uniformGridStep",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "100"
+        },
+        "primaryMetric" : {
+            "score" : 0.05692740354354856,
+            "scoreError" : 0.00171699506689095,
+            "scoreConfidence" : [
+                0.05521040847665761,
+                0.05864439861043951
+            ],
+            "scorePercentiles" : {
+                "0.0" : 0.0557887301427934,
+                "50.0" : 0.056534313284558615,
+                "90.0" : 0.059382760843647964,
+                "95.0" : 0.05956330808171044,
+                "99.0" : 0.05956330808171044,
+                "99.9" : 0.05956330808171044,
+                "99.99" : 0.05956330808171044,
+                "99.999" : 0.05956330808171044,
+                "99.9999" : 0.05956330808171044,
+                "100.0" : 0.05956330808171044
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    0.05729233195852666,
+                    0.057757835701085704,
+                    0.05676853487712129,
+                    0.05630009169199595,
+                    0.05956330808171044
+                ],
+                [
+                    0.05739492184541229,
+                    0.05610794794412969,
+                    0.05604142892362862,
+                    0.0557887301427934,
+                    0.0562589042690815
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.SimulationStepBenchmark.uniformGridStep",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "1000"
+        },
+        "primaryMetric" : {
+            "score" : 2.2631712255493985,
+            "scoreError" : 0.1053358469454002,
+            "scoreConfidence" : [
+                2.1578353786039983,
+                2.3685070724947987
+            ],
+            "scorePercentiles" : {
+                "0.0" : 2.183860209606987,
+                "50.0" : 2.269374964116367,
+                "90.0" : 2.3597416100180744,
+                "95.0" : 2.362014441037736,
+                "99.0" : 2.362014441037736,
+                "99.9" : 2.362014441037736,
+                "99.99" : 2.362014441037736,
+                "99.999" : 2.362014441037736,
+                "99.9999" : 2.362014441037736,
+                "100.0" : 2.362014441037736
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    2.1948255131578946,
+                    2.1980170701754385,
+                    2.2293804097995547,
+                    2.192377010940919,
+                    2.183860209606987
+                ],
+                [
+                    2.3392861308411215,
+                    2.362014441037736,
+                    2.311663935334873,
+                    2.3109180161662817,
+                    2.3093695184331797
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    },
+    {
+        "jmhVersion" : "1.37",
+        "benchmark" : "io.codeswarm.boids.benchmark.SimulationStepBenchmark.uniformGridStep",
+        "mode" : "avgt",
+        "threads" : 1,
+        "forks" : 2,
+        "jvm" : "/home/michal/.jdks/ms-21.0.12.1/bin/java",
+        "jvmArgs" : [
+            "-Dfile.encoding=UTF-8",
+            "-Djava.io.tmpdir=/store/Projects/reynolds-boids-visualization/reynolds-boids-visualization-0.3.0/build/tmp/jmh",
+            "-Duser.country",
+            "-Duser.language=en",
+            "-Duser.variant"
+        ],
+        "jdkVersion" : "21.0.12.1",
+        "vmName" : "OpenJDK 64-Bit Server VM",
+        "vmVersion" : "21.0.12.1+1-LTS",
+        "warmupIterations" : 3,
+        "warmupTime" : "1 s",
+        "warmupBatchSize" : 1,
+        "measurementIterations" : 5,
+        "measurementTime" : "1 s",
+        "measurementBatchSize" : 1,
+        "params" : {
+            "boidCount" : "5000"
+        },
+        "primaryMetric" : {
+            "score" : 46.706978493939395,
+            "scoreError" : 1.049505330370643,
+            "scoreConfidence" : [
+                45.65747316356875,
+                47.75648382431004
+            ],
+            "scorePercentiles" : {
+                "0.0" : 45.825734545454544,
+                "50.0" : 46.703959295454545,
+                "90.0" : 47.93691273181818,
+                "95.0" : 47.99173366666667,
+                "99.0" : 47.99173366666667,
+                "99.9" : 47.99173366666667,
+                "99.99" : 47.99173366666667,
+                "99.999" : 47.99173366666667,
+                "99.9999" : 47.99173366666667,
+                "100.0" : 47.99173366666667
+            },
+            "scoreUnit" : "ms/op",
+            "rawData" : [
+                [
+                    46.74510913636364,
+                    47.443524318181815,
+                    47.99173366666667,
+                    46.93430690909091,
+                    47.03452281818182
+                ],
+                [
+                    45.934847772727274,
+                    46.66280945454545,
+                    46.555634,
+                    45.825734545454544,
+                    45.941562318181816
+                ]
+            ]
+        },
+        "secondaryMetrics" : {
+        }
+    }
+]
+
+

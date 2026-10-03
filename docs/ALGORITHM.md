@@ -1,83 +1,45 @@
-# Algorithm — Milestone 0.3.0
+# Reynolds Boids algorithm — milestone 0.4
 
-## Reynolds steering rules
-
-The behavioral model remains the classic weighted combination:
-
-```text
-steering =
-    separation * separationWeight +
-    alignment  * alignmentWeight  +
-    cohesion   * cohesionWeight
-```
-
-Milestone 0.3 changes how neighbors are discovered, not the steering equations.
+Milestone 0.4 does not change the three classic steering rules. It changes how parameters are controlled and how the simulation is observed.
 
 ## Separation
 
-For neighbors inside `separationRadius`, the boid accumulates vectors pointing away from neighbors with stronger
-contribution at shorter distance. The average desired direction is converted into a limited steering force.
+Nearby boids inside `separationRadius` contribute repulsive steering. Closer boids contribute more strongly through inverse-distance weighting. The result is converted into a steering vector and limited by `maxForce`.
 
 ## Alignment
 
-The boid computes the average velocity of visible neighbors and steers its velocity toward that local average heading.
+Neighbors inside `perceptionRadius` contribute their velocities. Their mean heading becomes the desired velocity, from which current velocity is subtracted and steering is limited by `maxForce`.
 
 ## Cohesion
 
-The boid computes the center of mass of visible neighbors and steers toward that point.
+The average position of neighbors inside `perceptionRadius` forms a local center of mass. The boid steers toward that point.
 
-## Neighborhood predicate
-
-Both the naive and grid implementations use the same strict predicate:
+## Weighted composition
 
 ```text
-other.id != boid.id
-0 < distanceSquared(boid, other) < radius²
+steering = separation * separationWeight
+         + alignment  * alignmentWeight
+         + cohesion   * cohesionWeight
 ```
 
-Using squared distance avoids an unnecessary square root during filtering.
+All weights can be changed live in milestone 0.4. A live change creates a new immutable configuration and lightweight engine wiring; it does not mutate existing boids or reset `SimulationState`.
 
-## Naive neighborhood search
+## Snapshot semantics
 
-For every boid, every other boid is considered. A complete tick is therefore O(n²).
-
-## Uniform-grid neighborhood search
-
-### Build phase
-
-Each boid is assigned to one square cell:
+Every tick still follows:
 
 ```text
-cellX = floor(position.x / cellSize)
-cellY = floor(position.y / cellSize)
+state(t)
+  -> prepare NeighborIndex once
+  -> query every boid against the same state(t)
+  -> compute all next boids
+  -> publish state(t+1)
 ```
 
-Building the map is O(n).
+No boid observes a partially updated flock.
 
-### Query phase
+## Uniform Grid
 
-The query computes the number of cells intersecting the requested radius:
+World coordinates map to square cells. The default cell size equals `perceptionRadius`. A query scans only cells intersecting the requested radius and always performs an exact squared-Euclidean-distance check before accepting a neighbor.
 
-```text
-extent = ceil(radius / cellSize)
-```
-
-Only buckets in that local rectangular cell window are visited. Each candidate still undergoes the exact distance
-predicate, so the grid changes candidate selection only and does not approximate the Reynolds radius.
-
-### Expected behavior
-
-If density remains approximately bounded while world area and flock size scale together, local candidate work can stay
-close to constant per boid. In the fixed-size desktop world, density rises with flock size, so the practical complexity
-is workload-dependent; JMH results should therefore be treated as measured evidence rather than assuming ideal O(n).
-
-## Integration
-
-For each boid:
-
-```text
-newVelocity = limit(oldVelocity + steering, maxSpeed)
-newPosition = boundary(oldPosition + newVelocity)
-```
-
-All updates read from `SimulationState(t)` and are published together as `SimulationState(t + 1)`.
+0.4 can instrument the grid to expose candidate and occupancy metrics. Instrumentation does not alter neighbor semantics and is disabled in JMH fixtures.

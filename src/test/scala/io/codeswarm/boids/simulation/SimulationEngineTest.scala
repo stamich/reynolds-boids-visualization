@@ -4,7 +4,7 @@ import io.codeswarm.boids.model.{FlockConfig, SimulationConfig}
 import org.junit.jupiter.api.Assertions._
 import org.junit.jupiter.api.Test
 
-/** Integration-level invariants of the milestone-0.3 simulation engine. */
+/** Integration-level invariants of the milestone-0.4 simulation engine. */
 final class SimulationEngineTest {
 
   @Test

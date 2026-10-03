@@ -3,7 +3,7 @@ package io.codeswarm.boids.model
 import org.junit.jupiter.api.Assertions._
 import org.junit.jupiter.api.Test
 
-/** Validation tests for grouped milestone-0.3 configuration. */
+/** Validation tests for grouped milestone-0.4 configuration. */
 final class SimulationConfigTest {
 
   @Test

@@ -7,7 +7,7 @@ sealed trait NeighborSearchStrategy {
   def name: String
 }
 
-/** Supported milestone-0.3 neighborhood strategies. */
+/** Supported milestone-0.4 neighborhood strategies. */
 object NeighborSearchStrategy {
 
   /** Full-flock linear scan retained as the correctness baseline. */
@@ -15,7 +15,7 @@ object NeighborSearchStrategy {
     override val name: String = "naive"
   }
 
-  /** Uniform-grid spatial partitioning used as the milestone-0.3 default. */
+  /** Uniform-grid spatial partitioning used as the milestone-0.4 default. */
   case object UniformGrid extends NeighborSearchStrategy {
     override val name: String = "grid"
   }

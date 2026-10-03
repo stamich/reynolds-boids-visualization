@@ -2,106 +2,75 @@
 
 All notable changes to this project are documented here.
 
-## [0.3.0] - 2026-10-02
+## [0.4.0] - 2026-10-03
 
 ### Added
 
-- `NeighborIndex` abstraction prepared once per immutable simulation tick.
-- `UniformGridNeighborSearch` spatial partitioning implementation.
-- `NeighborSearchStrategy` ADT with `naive` and `grid` stable names.
-- Headless `--neighbor naive|grid` selection and selected-strategy output.
-- JMH Gradle plugin 0.7.3 integration using JMH 1.37.
-- `NeighborSearchBenchmark` for prepared-query comparison.
-- `SimulationStepBenchmark` for complete tick comparison including index construction.
-- JSON benchmark output contract at `benchmark/results/jmh-0.3.0.json`.
-- `benchmark/benchmark-contract-0.3.0.json` and `benchmark.sh`.
-- Uniform-grid correctness tests against the naive implementation.
-- Engine-level naive/grid equivalence regression test.
-- JavaFX runtime regression test for `javafx.scene.media.MediaException$Type`.
-- `BENCHMARKS.md` and migration documentation from 0.2.
+- Complete Gradle Wrapper surface: `gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.properties` and wrapper bootstrap JAR/source.
+- Gradle 9.8.0 binary-distribution SHA-256 verification.
+- `SimulationStatus` (`Ready`, `Running`, `Paused`).
+- `SimulationController` for lifecycle, deterministic restart and live configuration updates.
+- `SimulationControlPanel` with Start, Pause and Restart actions.
+- Reusable `DoubleParameterControl` and `IntParameterControl` slider/text-field controls.
+- Runtime controls for flock limits, Reynolds radii/weights and boid rendering size.
+- Restart-required handling for boid count and seed.
+- `MetricsPanel` with FPS, tick, simulation-step time, rendering time, speed and grid diagnostics.
+- `RuntimeMetrics` and `SpatialMetrics`.
+- Optional instrumented uniform-grid index with candidate, neighbor and cell-occupancy metrics.
+- `BoidColorStrategy`, deterministic `IdBasedColorStrategy` and diagnostic `SpeedBasedColorStrategy`.
+- `GridOverlayRenderer` and Show Grid UI option.
+- Fixed-density JMH benchmark.
+- Uniform-grid cell-size JMH benchmark.
+- GC/allocation benchmark script using JMH `-prof gc`.
+- Controller, metrics, color and Gradle-wrapper regression tests.
+- `docs/UI.md` and `docs/MIGRATION_FROM_0.3.0.md`.
 
 ### Changed
 
-- `NeighborSearch` now prepares a `NeighborIndex` instead of scanning a flock directly in every query call.
-- `DefaultSimulationEngine` builds one neighbor index per tick and reuses it for every boid.
-- `SimulationComponents.engine(config)` now uses uniform-grid search by default.
-- CI compiles JMH benchmark sources in a dedicated no-configuration-cache step after formatting and tests.
-- README, architecture, algorithm, headless and roadmap documentation updated for the performance milestone.
-- Scalafmt configuration no longer uses rewrite rules that caused source packaging to diverge from the checked format.
+- Desktop application is now composed from `SimulationView`, `SimulationControlPanel`, `MetricsPanel` and `SimulationController`.
+- Boids are rendered as stable individual colors instead of one global color.
+- Uniform-grid search can optionally expose diagnostics; instrumentation is disabled in benchmark fixtures.
+- CI uses `./gradlew` instead of relying on a preinstalled Gradle executable.
+- Benchmark contract extended with fixed-world, fixed-density, cell-size and GC/allocation families.
+- Release workflow requires wrapper, formatter, tests, headless smoke test and GUI smoke test.
 
-### Fixed
+### Preserved
 
-- Added `javafx-media` to the runtime dependencies, fixing the 0.2 GUI startup failure:
-  `NoClassDefFoundError: javafx/scene/media/MediaException$Type`.
-- Release documentation now requires `spotlessApply` before `spotlessCheck` and packaging.
-- Benchmark and production wiring share the same simulation components rather than duplicating steering logic.
-
-### Performance scope
-
-- `NaiveNeighborSearch` remains the O(n²) semantic baseline.
-- `UniformGridNeighborSearch` reduces candidate scanning through square-cell spatial partitioning.
-- JMH measures both prepared-index query cost and full simulation-step cost.
-- No benchmark numbers are hard-coded in the release because results are hardware/JVM dependent.
-
-### Intentionally deferred
-
-- quadtree comparison,
-- minimum-image/toroidal neighbor metric,
-- parallel simulation,
-- SoA storage,
-- interactive controls and grid overlay,
-- obstacles and predators,
-- Scala 3 migration.
-
-## [0.2.0] - 2026-10-02
-
-### Added
-
-- Gradle Kotlin DSL build with Gradle 9.8.0 pinned in CI and the wrapper task.
-- Dedicated immutable `Vector2` simulation type.
-- Strong `BoidId` identity type.
 - Immutable `SimulationState` snapshots.
-- Grouped world/flock/behavior/render configuration types.
-- `SteeringBehavior` abstraction with independent Separation, Alignment and Cohesion implementations.
-- `CompositeSteeringBehavior` and weighted behavior composition.
-- `NeighborSearch` abstraction and reference `NaiveNeighborSearch` implementation.
-- `BoundaryPolicy` and modulo-based `WrapAroundBoundary`.
-- Deterministic `SimulationInitializer` driven by configuration seed.
-- `SimulationEngine`, `DefaultSimulationEngine` and `SimulationRunner`.
-- Centralized `SimulationComponents` wiring.
-- Renderer abstraction and `ScalaFxRenderer`.
-- Headless application and Gradle `runHeadless` task.
-- JUnit 5 test suite for direct Gradle test discovery.
-- Spotless + Scalafmt formatting checks.
-- Headless CI smoke test.
+- Separation, alignment and cohesion semantics.
+- Uniform Grid as the default neighbor strategy.
+- Naive neighbor lookup as correctness/performance baseline.
+- Snapshot update semantics: all boids read `state(t)` and publish `state(t+1)` together.
+- Deterministic initialization by seed.
 
-### Changed
+### Deferred
 
-- Build system migrated from sbt to Gradle.
-- Simulation core no longer depends on ScalaFX.
-- All boids are updated from the same immutable input snapshot.
-- Rendering state is no longer mixed with simulation rules.
-- Configuration is split into focused immutable case classes.
+- QuadTree and KD-tree indexing.
+- Structure-of-Arrays simulation representation.
+- Parallel simulation stepping.
+- Toroidal minimum-image neighbor distance.
+- Predator/obstacle/food behaviors.
+- Boid selection and per-boid steering-vector debug rendering.
+- Scala 3 migration and GPU acceleration.
 
-### Known issues corrected in 0.3.0
+## [0.3.0] - 2026-10-03
 
-- source archive had not been fully normalized by Spotless before packaging,
-- `javafx-media` was missing from runtime dependencies and caused GUI startup failure.
+- Added `NeighborIndex`, `UniformGridNeighborSearch`, strategy selection and JMH benchmarks.
+- Added JSON benchmark output and correctness equivalence tests.
+- Added `javafx-media` and GUI runtime dependency regression coverage.
+- Measured large speedups for Uniform Grid at 1,000 and 5,000 boids.
 
-## [0.1.1] - 2026-10-02
+## [0.2.0]
 
-### Added
+- Replaced Breeze with immutable `Vector2`.
+- Introduced `SimulationState`, `SimulationEngine`, steering behavior composition, boundary policy, headless mode and renderer abstraction.
+- Migrated build from sbt to Gradle Kotlin DSL.
 
-- Apache License 2.0.
-- GitHub Actions CI.
-- Scalafmt integration.
-- stronger baseline unit tests and documentation.
+## [0.1.1]
 
-### Changed
-
-- stabilized the original implementation on Scala 2.13.18 / JDK 21-era dependencies.
-- centralized baseline simulation constants.
+- Stabilized and documented the original implementation.
+- Added Apache License 2.0, tests, CI and formatting.
 
 ## [0.1]
 
-Initial public Reynolds Boids ScalaFX visualization.
+Initial Reynolds Boids visualization baseline.

@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "io.codeswarm"
-version = "0.3.0"
+version = "0.4.0"
 
 repositories {
     mavenCentral()
@@ -83,7 +83,7 @@ tasks.test {
 
 tasks.register<JavaExec>("runHeadless") {
     group = "application"
-    description = "Runs a deterministic headless simulation smoke test with the uniform-grid neighbor search."
+    description = "Runs a deterministic headless simulation smoke test with uniform-grid neighbor search."
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("io.codeswarm.boids.app.HeadlessApplication")
     args("--boids", "250", "--steps", "500", "--seed", "42", "--neighbor", "grid")
@@ -91,7 +91,7 @@ tasks.register<JavaExec>("runHeadless") {
 
 tasks.register<JavaExec>("runHeadlessNaive") {
     group = "application"
-    description = "Runs the same deterministic headless smoke scenario with the naive neighbor search."
+    description = "Runs the same deterministic smoke scenario with naive neighbor search."
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("io.codeswarm.boids.app.HeadlessApplication")
     args("--boids", "250", "--steps", "500", "--seed", "42", "--neighbor", "naive")
@@ -116,7 +116,7 @@ jmh {
     timeOnIteration = "1s"
     warmup = "1s"
     resultFormat = "JSON"
-    resultsFile = file("benchmark/results/jmh-0.3.0.json")
+    resultsFile = file("benchmark/results/jmh-0.4.0.json")
     duplicateClassesStrategy = DuplicatesStrategy.WARN
 }
 
@@ -127,7 +127,7 @@ tasks.named<Jar>("jmhJar") {
 
 tasks.register("benchmark") {
     group = "benchmark"
-    description = "Runs the milestone 0.3 JMH benchmark suite."
+    description = "Runs the milestone 0.4 JMH benchmark suite."
     dependsOn("jmh")
 }
 

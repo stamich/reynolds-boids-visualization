@@ -1,47 +1,42 @@
 # Release checklist
 
-## Source quality
+Run from a clean checkout.
 
-- [ ] `gradle spotlessApply`
-- [ ] inspect the formatting diff
-- [ ] `gradle spotlessCheck`
-- [ ] no generated build output is committed
+```bash
+./gradlew --version
+./gradlew wrapper
+./gradlew spotlessApply
+./gradlew spotlessCheck
+./gradlew clean test
+./gradlew check
+./gradlew runHeadless
+./gradlew --no-configuration-cache jmhClasses
+./gradlew assembleDist
+```
 
-## Build and tests
+Manual GUI smoke test:
 
-- [ ] `gradle clean test`
-- [ ] `gradle check`
-- [ ] neighbor naive/grid equivalence tests pass
-- [ ] JavaFX media runtime dependency regression test passes
-- [ ] `gradle assembleDist`
+```bash
+./gradlew run
+```
 
-## Runtime smoke tests
+Verify:
 
-- [ ] `gradle runHeadless`
-- [ ] headless output reports `neighborSearch=grid`
-- [ ] `gradle runHeadlessNaive`
-- [ ] `gradle run` opens the ScalaFX window
-- [ ] no `NoClassDefFoundError` for JavaFX media classes
-- [ ] boids move continuously and remain inside the world
+- window opens without JavaFX linkage errors,
+- Start advances ticks,
+- Pause freezes ticks,
+- Start resumes,
+- Restart returns to deterministic tick zero,
+- live sliders/text fields affect behavior,
+- boid count/seed show restart-required state,
+- boids retain stable individual colors,
+- grid overlay toggles correctly,
+- metrics update without exceptions.
 
-## Benchmarks
+Before packaging:
 
-- [ ] `gradle jmhClasses`
-- [ ] controlled-machine release run: `gradle jmh`
-- [ ] `benchmark/results/jmh-0.3.0.json` is valid JSON
-- [ ] benchmark environment is recorded with release notes when performance numbers are published
-
-## Documentation
-
-- [ ] README matches actual commands and default strategy
-- [ ] ARCHITECTURE describes prepared indexes
-- [ ] BENCHMARKS describes measurement boundaries
-- [ ] ROADMAP is updated
-- [ ] CHANGELOG is updated
-
-## Packaging
-
-- [ ] version is `0.3.0`
-- [ ] LICENSE and NOTICE are present
-- [ ] archive contains no `build/`, `.gradle/` or IDE output
-- [ ] archive filename is `reynolds-boids-visualization-0.3.0.zip`
+- run `./gradlew spotlessCheck`,
+- confirm `gradle/wrapper/` is present,
+- confirm version is `0.4.0`,
+- update README, Changelog and docs,
+- ensure benchmark output files are not accidentally committed unless intentionally retained.

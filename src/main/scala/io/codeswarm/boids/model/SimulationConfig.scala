@@ -8,8 +8,8 @@ package io.codeswarm.boids.model
   *   vertical extent
   */
 final case class WorldConfig(width: Double = 1200.0, height: Double = 800.0) {
-  require(width > 0.0, "width must be positive")
-  require(height > 0.0, "height must be positive")
+  require(width > 0.0 && java.lang.Double.isFinite(width), "width must be finite and positive")
+  require(height > 0.0 && java.lang.Double.isFinite(height), "height must be finite and positive")
 }
 
 /** Flock-wide physical limits.
@@ -23,8 +23,8 @@ final case class WorldConfig(width: Double = 1200.0, height: Double = 800.0) {
   */
 final case class FlockConfig(boidCount: Int = 200, maxSpeed: Double = 4.0, maxForce: Double = 0.08) {
   require(boidCount > 0, "boidCount must be positive")
-  require(maxSpeed > 0.0, "maxSpeed must be positive")
-  require(maxForce > 0.0, "maxForce must be positive")
+  require(maxSpeed > 0.0 && java.lang.Double.isFinite(maxSpeed), "maxSpeed must be finite and positive")
+  require(maxForce > 0.0 && java.lang.Double.isFinite(maxForce), "maxForce must be finite and positive")
 }
 
 /** Parameters of the three classic Reynolds steering rules.
@@ -47,22 +47,31 @@ final case class BehaviorConfig(
     alignmentWeight: Double = 1.0,
     cohesionWeight: Double = 1.0
 ) {
-  require(perceptionRadius > 0.0, "perceptionRadius must be positive")
-  require(separationRadius > 0.0, "separationRadius must be positive")
+  require(perceptionRadius > 0.0 && java.lang.Double.isFinite(perceptionRadius), "perceptionRadius must be finite and positive")
+  require(separationRadius > 0.0 && java.lang.Double.isFinite(separationRadius), "separationRadius must be finite and positive")
   require(separationRadius <= perceptionRadius, "separationRadius should not exceed perceptionRadius")
-  require(separationWeight >= 0.0, "separationWeight must be non-negative")
-  require(alignmentWeight >= 0.0, "alignmentWeight must be non-negative")
-  require(cohesionWeight >= 0.0, "cohesionWeight must be non-negative")
+  require(separationWeight >= 0.0 && java.lang.Double.isFinite(separationWeight), "separationWeight must be finite and non-negative")
+  require(alignmentWeight >= 0.0 && java.lang.Double.isFinite(alignmentWeight), "alignmentWeight must be finite and non-negative")
+  require(cohesionWeight >= 0.0 && java.lang.Double.isFinite(cohesionWeight), "cohesionWeight must be finite and non-negative")
 }
 
 /** Rendering parameters kept outside the simulation physics.
   *
   * @param boidSize
   *   triangle size in pixels
+  * @param showGrid
+  *   whether the uniform-grid overlay is rendered
   */
-final case class RenderConfig(boidSize: Double = 7.0) {
-  require(boidSize > 0.0, "boidSize must be positive")
+final case class RenderConfig(boidSize: Double = 7.0, showGrid: Boolean = false) {
+  require(boidSize > 0.0 && java.lang.Double.isFinite(boidSize), "boidSize must be finite and positive")
 }
+
+/** Diagnostic switches that are intentionally separate from simulation semantics.
+  *
+  * @param spatialMetricsEnabled
+  *   enables counters inside spatial indexes
+  */
+final case class DiagnosticsConfig(spatialMetricsEnabled: Boolean = false)
 
 /** Complete deterministic configuration of a simulation run.
   *
@@ -74,6 +83,8 @@ final case class RenderConfig(boidSize: Double = 7.0) {
   *   steering-rule parameters
   * @param render
   *   rendering-only configuration
+  * @param diagnostics
+  *   optional runtime instrumentation
   * @param seed
   *   random seed used by the initializer
   */
@@ -82,10 +93,12 @@ final case class SimulationConfig(
     flock: FlockConfig = FlockConfig(),
     behavior: BehaviorConfig = BehaviorConfig(),
     render: RenderConfig = RenderConfig(),
+    diagnostics: DiagnosticsConfig = DiagnosticsConfig(),
     seed: Long = 42L
 )
 
-/** Default desktop configuration. */
+/** Default configurations for desktop and benchmark use. */
 object SimulationConfig {
   val Default: SimulationConfig = SimulationConfig()
+  val Desktop: SimulationConfig = Default.copy(diagnostics = DiagnosticsConfig(spatialMetricsEnabled = true))
 }
