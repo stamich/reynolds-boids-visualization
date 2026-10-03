@@ -1,14 +1,37 @@
 package io.codeswarm.boids.neighbor
 
-import io.codeswarm.boids.model.Boid
+import io.codeswarm.boids.model.{Boid, WorldConfig}
 
-/** Strategy used by the simulation engine to discover local neighbors.
+/** Prepared read-only neighborhood index for one immutable flock snapshot.
   *
-  * Milestone 0.2 ships only the reference O(n²) implementation. The abstraction is introduced now so milestone 0.3 can
-  * add grid- or tree-based searches without changing the engine or steering rules.
+  * A simulation tick builds an index once and then reuses it for all boid queries. This contract allows a simple reference implementation and spatial indexes
+  * to share the same engine integration.
   */
+trait NeighborIndex {
+
+  /** Returns neighbors within `radius`, excluding the query boid itself.
+    *
+    * @param boid
+    *   boid whose neighborhood is requested
+    * @param radius
+    *   strict Euclidean query radius
+    * @return
+    *   boids whose distance from `boid` is greater than zero and smaller than `radius`
+    */
+  def neighborsOf(boid: Boid, radius: Double): IndexedSeq[Boid]
+}
+
+/** Strategy that prepares a neighborhood index for one immutable flock snapshot. */
 trait NeighborSearch {
 
-  /** Returns neighbors within `radius`, excluding the query boid itself. */
-  def neighborsOf(boid: Boid, flock: IndexedSeq[Boid], radius: Double): IndexedSeq[Boid]
+  /** Builds a query structure for `flock`.
+    *
+    * @param flock
+    *   immutable flock snapshot used throughout one simulation tick
+    * @param world
+    *   world dimensions available to spatial implementations
+    * @return
+    *   prepared neighborhood index
+    */
+  def index(flock: IndexedSeq[Boid], world: WorldConfig): NeighborIndex
 }

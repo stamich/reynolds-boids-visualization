@@ -1,69 +1,124 @@
-# Architecture — milestone 0.2.0
+# Architecture — Milestone 0.3.0
 
 ## Goals
 
-Milestone 0.2 separates the simulation core from ScalaFX and from specific infrastructure implementations. The core can
-now run deterministically in tests, a command-line process or the desktop visualizer.
+Milestone 0.3 keeps the domain/rendering separation from 0.2 and changes the expensive neighborhood boundary so a
+spatial data structure can be built once for each immutable flock snapshot.
 
-## Dependency direction
+The simulation core remains independent of ScalaFX.
+
+## Component view
 
 ```text
-app ───────────────► simulation ─────────► model/math
- │                     │  │
- │                     │  ├─────────────► behavior
- │                     │  ├─────────────► neighbor
- │                     │  └─────────────► boundary
- │
- └──────────────────► rendering ─────────► model
-                          │
-                          └──────────────► ScalaFX
+BoidApplication / HeadlessApplication
+                |
+                v
+        SimulationComponents
+                |
+                v
+        DefaultSimulationEngine
+          /         |          \
+         /          |           \
+        v            v            v
+SteeringBehavior NeighborSearch BoundaryPolicy
+                      |
+                      v
+                 NeighborIndex
+                   /      \
+                  /        \
+                 v          v
+              Naive    UniformGrid
+
+SimulationState -------------------------------------> Renderer
+                                                           |
+                                                           v
+                                                    ScalaFxRenderer
 ```
 
-The domain and simulation packages never import ScalaFX.
+## Immutable tick model
 
-## Core state
+A tick is evaluated from one immutable state:
 
-`SimulationState` is immutable. Every call to `SimulationEngine.step` reads the same snapshot and produces a complete
-new state. There are no partially updated neighbors.
+```text
+state(t)
+   |
+   +--> build NeighborIndex once
+   |
+   +--> query neighbors for every boid
+   |
+   +--> evaluate weighted steering
+   |
+   +--> integrate velocity and position
+   |
+   v
+state(t + 1)
+```
 
-## Vector model
+No boid can observe another boid that has already been updated during the same tick.
 
-Breeze is removed. `Vector2` is deliberately small and domain-specific. It supports magnitude, normalization, limiting,
-dot products and distance operations needed by flocking.
+## NeighborSearch and NeighborIndex
 
-## Steering
+`NeighborSearch` is responsible for preparation:
 
-`SteeringBehavior` is a pure strategy. `Separation`, `Alignment`, and `Cohesion` implement the classic rules.
-`CompositeSteeringBehavior` applies explicit weights without coupling the engine to concrete behaviors.
+```scala
+def index(flock: IndexedSeq[Boid], world: WorldConfig): NeighborIndex
+```
 
-## Neighbor search
+`NeighborIndex` is responsible for repeated queries:
 
-`NeighborSearch` is the seam for milestone 0.3. `NaiveNeighborSearch` scans the flock and remains the correctness and
-performance baseline.
+```scala
+def neighborsOf(boid: Boid, radius: Double): IndexedSeq[Boid]
+```
 
-## Boundaries
+This split is important. Building a grid inside every `neighborsOf` call would still make the algorithm expensive and
+would hide index-construction cost from simulation-step benchmarks.
 
-`BoundaryPolicy` removes screen-edge logic from the engine. `WrapAroundBoundary` preserves the toroidal screen behavior
-from the baseline implementation.
+## NaiveNeighborSearch
+
+The naive implementation stores the immutable flock and scans every boid for each query. It is retained for:
+
+- semantic correctness comparison,
+- performance baseline,
+- regression diagnosis,
+- small-flock scenarios where simplicity may be sufficient.
+
+## UniformGridNeighborSearch
+
+The grid maps world positions to integer cells:
+
+```text
+cellX = floor(x / cellSize)
+cellY = floor(y / cellSize)
+```
+
+For a query radius `r`, it examines cells within:
+
+```text
+ceil(r / cellSize)
+```
+
+cells in each direction. Candidates then pass through the same strict squared-Euclidean-distance predicate used by the
+naive baseline.
+
+The default cell size equals `perceptionRadius`, which means the standard full-perception query normally examines a 3x3
+cell neighborhood.
+
+## Boundary semantics
+
+`WrapAroundBoundary` still maps positions back into the rectangular world after integration. Neighbor search in 0.3 is
+still Euclidean, not minimum-image/toroidal. Therefore boids near opposite world edges are not yet treated as close
+neighbors.
+
+A true toroidal metric is intentionally deferred so the performance change can be compared against 0.2 semantics.
 
 ## Rendering
 
-`Renderer` consumes `SimulationState`; it cannot influence physics. `ScalaFxRenderer` is the only class in the rendering
-path that knows JavaFX/ScalaFX primitives.
+`Renderer` receives immutable states only. `ScalaFxRenderer` knows about JavaFX/ScalaFX; the simulation core does not.
 
-## Determinism
+Milestone 0.3 explicitly includes `javafx-media` because the selected ScalaFX version loads JavaFX media types while
+initializing canvas-related classes.
 
-`RandomSimulationInitializer` is seeded from `SimulationConfig`. Same config + same seed + same number of steps produces
-an identical trajectory.
+## Benchmark boundary
 
-## Intentionally deferred
-
-- spatial hash / uniform grid,
-- quadtree,
-- JMH,
-- true toroidal neighbor distance across opposite screen edges,
-- obstacles and predators,
-- interactive control panel,
-- parallel simulation,
-- structure-of-arrays storage,
-- Scala 3 migration.
+JMH benchmark sources live outside production sources in `src/jmh/java` and depend on the production `main` source set.
+The benchmark suite measures both isolated neighborhood queries and complete simulation ticks.

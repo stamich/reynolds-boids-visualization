@@ -1,28 +1,47 @@
-# Release checklist — 0.2.0
+# Release checklist
 
-Run from a clean checkout:
+## Source quality
 
-```bash
-gradle --version
-gradle clean spotlessCheck test
-gradle runHeadless
-gradle assembleDist
-```
+- [ ] `gradle spotlessApply`
+- [ ] inspect the formatting diff
+- [ ] `gradle spotlessCheck`
+- [ ] no generated build output is committed
 
-Manual desktop smoke test:
+## Build and tests
 
-```bash
-gradle run
-```
+- [ ] `gradle clean test`
+- [ ] `gradle check`
+- [ ] neighbor naive/grid equivalence tests pass
+- [ ] JavaFX media runtime dependency regression test passes
+- [ ] `gradle assembleDist`
 
-Verify:
+## Runtime smoke tests
 
-- the window title reports 0.2.0,
-- boids move and flock,
-- separation/alignment/cohesion remain visually plausible,
-- screen wrapping works,
-- no NaN/Infinity behavior is visible,
-- `runHeadless` reports `finite=true`,
-- tests and formatting checks are green,
-- CI uses only Gradle commands,
-- no `build.sbt`, `project/plugins.sbt` or Breeze dependency remains.
+- [ ] `gradle runHeadless`
+- [ ] headless output reports `neighborSearch=grid`
+- [ ] `gradle runHeadlessNaive`
+- [ ] `gradle run` opens the ScalaFX window
+- [ ] no `NoClassDefFoundError` for JavaFX media classes
+- [ ] boids move continuously and remain inside the world
+
+## Benchmarks
+
+- [ ] `gradle jmhClasses`
+- [ ] controlled-machine release run: `gradle jmh`
+- [ ] `benchmark/results/jmh-0.3.0.json` is valid JSON
+- [ ] benchmark environment is recorded with release notes when performance numbers are published
+
+## Documentation
+
+- [ ] README matches actual commands and default strategy
+- [ ] ARCHITECTURE describes prepared indexes
+- [ ] BENCHMARKS describes measurement boundaries
+- [ ] ROADMAP is updated
+- [ ] CHANGELOG is updated
+
+## Packaging
+
+- [ ] version is `0.3.0`
+- [ ] LICENSE and NOTICE are present
+- [ ] archive contains no `build/`, `.gradle/` or IDE output
+- [ ] archive filename is `reynolds-boids-visualization-0.3.0.zip`

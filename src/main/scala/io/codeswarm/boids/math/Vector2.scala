@@ -2,9 +2,8 @@ package io.codeswarm.boids.math
 
 /** Immutable two-dimensional vector used by the simulation core.
   *
-  * Milestone 0.2 removes the general-purpose Breeze dependency from the simulation hot path. `Vector2` intentionally
-  * exposes only the operations required by the boids model, keeping the domain model small and allocation behavior
-  * explicit.
+  * Milestone 0.2 removes the general-purpose Breeze dependency from the simulation hot path. `Vector2` intentionally exposes only the operations required by
+  * the boids model, keeping the domain model small and allocation behavior explicit.
   *
   * @param x
   *   horizontal component

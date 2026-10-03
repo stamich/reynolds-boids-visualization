@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test
 final class BehaviorTest {
   private val context = SteeringContext(maxSpeed = 4.0, maxForce = 0.5)
 
-  @Test def separationPointsAwayFromCloseNeighbor(): Unit = {
+  @Test
+  def separationPointsAwayFromCloseNeighbor(): Unit = {
     val boid = Boid(BoidId(1), Vector2(0.0, 0.0), Vector2.Zero)
     val other = Boid(BoidId(2), Vector2(1.0, 0.0), Vector2.Zero)
     val force = new Separation(10.0).force(boid, Vector(other), context)
@@ -17,7 +18,8 @@ final class BehaviorTest {
     assertEquals(0.0, force.y, 1e-12)
   }
 
-  @Test def alignmentSteersTowardAverageVelocity(): Unit = {
+  @Test
+  def alignmentSteersTowardAverageVelocity(): Unit = {
     val boid = Boid(BoidId(1), Vector2.Zero, Vector2(0.0, 1.0))
     val neighbors = Vector(
       Boid(BoidId(2), Vector2(1.0, 0.0), Vector2(2.0, 0.0)),
@@ -27,7 +29,8 @@ final class BehaviorTest {
     assertTrue(force.x > 0.0)
   }
 
-  @Test def cohesionSteersTowardCenterOfMass(): Unit = {
+  @Test
+  def cohesionSteersTowardCenterOfMass(): Unit = {
     val boid = Boid(BoidId(1), Vector2.Zero, Vector2.Zero)
     val neighbors = Vector(
       Boid(BoidId(2), Vector2(10.0, 0.0), Vector2.Zero),
@@ -38,7 +41,8 @@ final class BehaviorTest {
     assertEquals(0.0, force.y, 1e-12)
   }
 
-  @Test def noNeighborsProduceZeroForAlignmentAndCohesion(): Unit = {
+  @Test
+  def noNeighborsProduceZeroForAlignmentAndCohesion(): Unit = {
     val boid = Boid(BoidId(1), Vector2.Zero, Vector2.Zero)
     assertEquals(Vector2.Zero, new Alignment().force(boid, Vector.empty, context))
     assertEquals(Vector2.Zero, new Cohesion().force(boid, Vector.empty, context))

@@ -5,8 +5,8 @@ import io.codeswarm.boids.model.Boid
 
 /** Implements short-range separation: nearby boids repel each other.
   *
-  * The neighbor list is expected to be filtered to `radius` by the caller. Distance is still checked defensively so the
-  * behavior remains correct when used independently in tests or future compositions.
+  * The neighbor list is expected to be filtered to `radius` by the caller. Distance is still checked defensively so the behavior remains correct when used
+  * independently in tests or future compositions.
   *
   * @param radius
   *   maximum separation distance

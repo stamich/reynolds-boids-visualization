@@ -10,7 +10,8 @@ final class WrapAroundBoundaryTest {
   private val boundary = new WrapAroundBoundary
   private val world = WorldConfig(100.0, 80.0)
 
-  @Test def wrapsNegativeAndPositiveCoordinates(): Unit = {
+  @Test
+  def wrapsNegativeAndPositiveCoordinates(): Unit = {
     assertEquals(Vector2(99.0, 1.0), boundary(Vector2(-1.0, 81.0), world))
     assertEquals(Vector2(1.0, 79.0), boundary(Vector2(201.0, -1.0), world))
   }
