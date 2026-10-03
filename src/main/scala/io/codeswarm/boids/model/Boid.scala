@@ -4,8 +4,8 @@ import io.codeswarm.boids.math.Vector2
 
 /** Immutable state of one boid.
   *
-  * Acceleration is intentionally not persisted in the domain model. Steering is a derived value for one logical tick;
-  * the engine computes it from `SimulationState(t)` and immediately integrates it into velocity and position.
+  * Acceleration is intentionally not persisted in the domain model. Steering is a derived value for one logical tick; the engine computes it from
+  * `SimulationState(t)` and immediately integrates it into velocity and position.
   *
   * @param id
   *   stable boid identifier

@@ -5,8 +5,8 @@ import io.codeswarm.boids.model.Boid
 
 /** Combines independent steering behaviors through explicit weights.
   *
-  * This removes knowledge of concrete rules from `SimulationEngine`. Future behaviors such as obstacle avoidance or
-  * predator avoidance can be added by composition rather than engine modification.
+  * This removes knowledge of concrete rules from `SimulationEngine`. Future behaviors such as obstacle avoidance or predator avoidance can be added by
+  * composition rather than engine modification.
   *
   * @param behaviors
   *   weighted steering components

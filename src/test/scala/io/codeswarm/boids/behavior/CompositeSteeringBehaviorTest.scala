@@ -12,7 +12,8 @@ final class CompositeSteeringBehaviorTest {
     override def force(boid: Boid, neighbors: IndexedSeq[Boid], context: SteeringContext): Vector2 = value
   }
 
-  @Test def weightsAreAppliedAndSummed(): Unit = {
+  @Test
+  def weightsAreAppliedAndSummed(): Unit = {
     val composite = new CompositeSteeringBehavior(
       Vector(
         WeightedBehavior(new ConstantBehavior(Vector2(1.0, 0.0)), 2.0),

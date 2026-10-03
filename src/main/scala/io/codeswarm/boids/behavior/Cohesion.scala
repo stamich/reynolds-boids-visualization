@@ -7,10 +7,11 @@ import io.codeswarm.boids.model.Boid
 final class Cohesion extends SteeringBehavior {
 
   /** Computes steering toward the mean position of visible neighbors. */
-  override def force(boid: Boid, neighbors: IndexedSeq[Boid], context: SteeringContext): Vector2 =
+  override def force(boid: Boid, neighbors: IndexedSeq[Boid], context: SteeringContext): Vector2 = {
     if (neighbors.isEmpty) Vector2.Zero
     else {
       val center = SteeringMath.average(neighbors.map(_.position))
       SteeringMath.steerToward(boid, center, context)
     }
+  }
 }
