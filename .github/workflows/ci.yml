@@ -26,10 +26,13 @@ jobs:
         with:
           gradle-version: "9.8.0"
 
-      - name: Check formatting and run tests
+      - name: Check formatting and tests
         run: gradle --no-daemon clean check
 
-      - name: Headless smoke test
+      - name: Compile JMH benchmark sources
+        run: gradle --no-daemon --no-configuration-cache jmhClasses
+
+      - name: Headless uniform-grid smoke test
         run: gradle --no-daemon runHeadless
 
       - name: Build distribution
