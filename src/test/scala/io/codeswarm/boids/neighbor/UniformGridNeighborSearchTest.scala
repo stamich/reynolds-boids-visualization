@@ -6,7 +6,7 @@ import io.codeswarm.boids.simulation.RandomSimulationInitializer
 import org.junit.jupiter.api.Assertions.{assertEquals, assertThrows}
 import org.junit.jupiter.api.Test
 
-/** Correctness tests for the milestone-0.3 uniform-grid spatial index. */
+/** Correctness tests for the milestone-0.4 uniform-grid spatial index. */
 final class UniformGridNeighborSearchTest {
 
   /** Verifies that grid queries produce exactly the same neighbors as the naive reference implementation. */
