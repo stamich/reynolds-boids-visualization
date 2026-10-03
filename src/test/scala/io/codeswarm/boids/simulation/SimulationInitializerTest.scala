@@ -7,13 +7,15 @@ import org.junit.jupiter.api.Test
 /** Determinism tests for seeded initialization. */
 final class SimulationInitializerTest {
 
-  @Test def sameSeedProducesSameInitialState(): Unit = {
+  @Test
+  def sameSeedProducesSameInitialState(): Unit = {
     val config = SimulationConfig.Default.copy(flock = FlockConfig(50, 4.0, 0.08), seed = 123L)
     val initializer = new RandomSimulationInitializer
     assertEquals(initializer.initialize(config), initializer.initialize(config))
   }
 
-  @Test def differentSeedChangesInitialState(): Unit = {
+  @Test
+  def differentSeedChangesInitialState(): Unit = {
     val initializer = new RandomSimulationInitializer
     assertNotEquals(
       initializer.initialize(SimulationConfig.Default.copy(seed = 1L)),

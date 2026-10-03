@@ -4,10 +4,11 @@ import io.codeswarm.boids.model.{FlockConfig, SimulationConfig}
 import org.junit.jupiter.api.Assertions._
 import org.junit.jupiter.api.Test
 
-/** Integration-level invariants of the milestone-0.2 simulation engine. */
+/** Integration-level invariants of the milestone-0.3 simulation engine. */
 final class SimulationEngineTest {
 
-  @Test def stepAdvancesTickAndPreservesFlockSize(): Unit = {
+  @Test
+  def stepAdvancesTickAndPreservesFlockSize(): Unit = {
     val config = SimulationConfig.Default.copy(flock = FlockConfig(25, 4.0, 0.08), seed = 7L)
     val initializer = new RandomSimulationInitializer
     val initial = initializer.initialize(config)
@@ -16,7 +17,8 @@ final class SimulationEngineTest {
     assertEquals(initial.boids.size, next.boids.size)
   }
 
-  @Test def longRunPreservesCoreInvariants(): Unit = {
+  @Test
+  def longRunPreservesCoreInvariants(): Unit = {
     val config = SimulationConfig.Default.copy(flock = FlockConfig(80, 4.0, 0.08), seed = 42L)
     val initializer = new RandomSimulationInitializer
     val finalState = new SimulationRunner(SimulationComponents.engine(config)).run(initializer.initialize(config), 300)
@@ -30,7 +32,8 @@ final class SimulationEngineTest {
     assertTrue(finalState.boids.forall(b => b.position.y >= 0.0 && b.position.y < config.world.height))
   }
 
-  @Test def identicalSeedAndConfigurationProduceIdenticalTrajectory(): Unit = {
+  @Test
+  def identicalSeedAndConfigurationProduceIdenticalTrajectory(): Unit = {
     val config = SimulationConfig.Default.copy(flock = FlockConfig(30, 4.0, 0.08), seed = 99L)
     val initializer = new RandomSimulationInitializer
     val runner = new SimulationRunner(SimulationComponents.engine(config))
