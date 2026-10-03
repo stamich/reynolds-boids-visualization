@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "project": "reynolds-boids-visualization",
+  "milestone": "0.4.0",
+  "benchmark_contract_origin": "reynolds-boids-visualization-0.4.0",
+  "jmh_version": "1.37",
+  "families": [
+    "neighbor-search-fixed-world",
+    "simulation-step-fixed-world",
+    "simulation-step-fixed-density",
+    "uniform-grid-cell-size",
+    "gc-allocation"
+  ],
+  "primary_result": "benchmark/results/jmh-0.4.0.json",
+  "gc_result": "benchmark/results/jmh-0.4.0-gc.json"
+}

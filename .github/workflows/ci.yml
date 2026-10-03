@@ -21,19 +21,20 @@ jobs:
           distribution: temurin
           java-version: "21"
 
-      - name: Set up Gradle 9.8.0
+      - name: Cache Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "9.8.0"
+
+      - name: Verify wrapper bootstrap
+        run: ./gradlew --version
 
       - name: Check formatting and tests
-        run: gradle --no-daemon clean check
+        run: ./gradlew --no-daemon clean check
 
       - name: Compile JMH benchmark sources
-        run: gradle --no-daemon --no-configuration-cache jmhClasses
+        run: ./gradlew --no-daemon --no-configuration-cache jmhClasses
 
       - name: Headless uniform-grid smoke test
-        run: gradle --no-daemon runHeadless
+        run: ./gradlew --no-daemon runHeadless
 
       - name: Build distribution
-        run: gradle --no-daemon assembleDist
+        run: ./gradlew --no-daemon assembleDist
