@@ -8,7 +8,7 @@ import scalafx.application.JFXApp3
 import scalafx.scene.Scene
 import scalafx.scene.canvas.Canvas
 
-/** Desktop ScalaFX entry point for Reynolds Boids Visualization milestone 0.2. */
+/** Desktop ScalaFX entry point for Reynolds Boids Visualization milestone 0.3. */
 object BoidApplication extends JFXApp3 {
 
   private val config = SimulationConfig.Default
@@ -22,7 +22,7 @@ object BoidApplication extends JFXApp3 {
     val renderer = new ScalaFxRenderer(canvas.graphicsContext2D, config.world, config.render)
 
     stage = new JFXApp3.PrimaryStage {
-      title = "Reynolds Boids Visualization 0.2.0"
+      title = "Reynolds Boids Visualization 0.3.0"
       scene = new Scene(config.world.width, config.world.height) {
         content = canvas
       }
