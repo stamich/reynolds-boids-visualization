@@ -1,19 +1,26 @@
 package io.codeswarm.boids.neighbor
 
-import io.codeswarm.boids.model.Boid
+import io.codeswarm.boids.model.{Boid, WorldConfig}
 
-/** Direct O(n) neighbor query used as the correctness and performance baseline for future spatial indexes. */
+/** Reference neighbor strategy that scans the complete flock for every query.
+  *
+  * The implementation is intentionally retained in milestone 0.3 as the correctness baseline for spatial indexing and as the JMH performance baseline against
+  * which the uniform-grid implementation is measured.
+  */
 final class NaiveNeighborSearch extends NeighborSearch {
 
-  /** Scans the complete flock and filters by squared Euclidean distance. */
-  override def neighborsOf(boid: Boid, flock: IndexedSeq[Boid], radius: Double): IndexedSeq[Boid] = {
-    require(radius > 0.0, "radius must be positive")
-    val radiusSquared = radius * radius
-    flock.filter { other =>
-      other.id != boid.id && {
-        val distanceSquared = boid.position.distanceSquaredTo(other.position)
-        distanceSquared > 0.0 && distanceSquared < radiusSquared
+  /** Captures the immutable flock snapshot in a simple linear-scan index. */
+  override def index(flock: IndexedSeq[Boid], world: WorldConfig): NeighborIndex =
+    new NeighborIndex {
+      override def neighborsOf(boid: Boid, radius: Double): IndexedSeq[Boid] = {
+        require(radius > 0.0, "radius must be positive")
+        val radiusSquared = radius * radius
+        flock.filter { other =>
+          other.id != boid.id && {
+            val distanceSquared = boid.position.distanceSquaredTo(other.position)
+            distanceSquared > 0.0 && distanceSquared < radiusSquared
+          }
+        }
       }
     }
-  }
 }
