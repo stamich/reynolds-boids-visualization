@@ -1,12 +1,11 @@
 .gradle/
 build/
-target/
 out/
-project/project/
-project/target/
 .idea/
 *.iml
 .bsp/
 .metals/
 .vscode/
 .DS_Store
+benchmark/results/*.json
+!benchmark/results/.gitkeep

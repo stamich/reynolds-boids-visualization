@@ -1,3 +1,5 @@
+import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.scala.ScalaCompile
 import org.gradle.api.tasks.wrapper.Wrapper
 
@@ -5,10 +7,11 @@ plugins {
     scala
     application
     id("com.diffplug.spotless") version "8.10.3"
+    id("me.champeau.jmh") version "0.7.3"
 }
 
 group = "io.codeswarm"
-version = "0.2.0"
+version = "0.3.0"
 
 repositories {
     mavenCentral()
@@ -32,6 +35,8 @@ val javaFxPlatform =
         }
     }
 
+val javaFxModules = listOf("base", "graphics", "controls", "media")
+
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
@@ -42,22 +47,12 @@ scala {
     scalaVersion = scalaLibraryVersion
 }
 
-val javaFxModules =
-    listOf(
-        "base",
-        "graphics",
-        "controls",
-        "media",
-    )
-
 dependencies {
     implementation("org.scala-lang:scala-library:$scalaLibraryVersion")
     implementation("org.scalafx:scalafx_2.13:$scalaFxVersion")
 
     javaFxModules.forEach { module ->
-        implementation(
-            "org.openjfx:javafx-$module:$javaFxVersion:$javaFxPlatform",
-        )
+        implementation("org.openjfx:javafx-$module:$javaFxVersion:$javaFxPlatform")
     }
 
     testImplementation(platform("org.junit:junit-bom:$junitVersion"))
@@ -88,10 +83,18 @@ tasks.test {
 
 tasks.register<JavaExec>("runHeadless") {
     group = "application"
-    description = "Runs a deterministic headless simulation smoke test."
+    description = "Runs a deterministic headless simulation smoke test with the uniform-grid neighbor search."
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("io.codeswarm.boids.app.HeadlessApplication")
-    args("--boids", "250", "--steps", "500", "--seed", "42")
+    args("--boids", "250", "--steps", "500", "--seed", "42", "--neighbor", "grid")
+}
+
+tasks.register<JavaExec>("runHeadlessNaive") {
+    group = "application"
+    description = "Runs the same deterministic headless smoke scenario with the naive neighbor search."
+    classpath = sourceSets.main.get().runtimeClasspath
+    mainClass.set("io.codeswarm.boids.app.HeadlessApplication")
+    args("--boids", "250", "--steps", "500", "--seed", "42", "--neighbor", "naive")
 }
 
 spotless {
@@ -103,6 +106,29 @@ spotless {
         target("*.gradle.kts")
         ktlint()
     }
+}
+
+jmh {
+    jmhVersion = "1.37"
+    warmupIterations = 3
+    iterations = 5
+    fork = 2
+    timeOnIteration = "1s"
+    warmup = "1s"
+    resultFormat = "JSON"
+    resultsFile = file("benchmark/results/jmh-0.3.0.json")
+    duplicateClassesStrategy = DuplicatesStrategy.WARN
+}
+
+tasks.named<Jar>("jmhJar") {
+    exclude("module-info.class")
+    exclude("META-INF/versions/**/module-info.class")
+}
+
+tasks.register("benchmark") {
+    group = "benchmark"
+    description = "Runs the milestone 0.3 JMH benchmark suite."
+    dependsOn("jmh")
 }
 
 tasks.check {
