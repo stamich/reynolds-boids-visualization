@@ -1,67 +1,22 @@
 # Roadmap
 
 ## 0.1
-
-Original Reynolds boids visualization prototype.
+Original visualization baseline.
 
 ## 0.1.1
+Stabilization, tests, documentation and licensing.
 
-Stabilized baseline: dependency refresh, tests, documentation, Apache-2.0 and GitHub Actions.
+## 0.2
+Clean simulation architecture, own `Vector2`, Gradle, headless mode and renderer abstraction.
 
-## 0.2.0 — architecture and Gradle migration
+## 0.3
+Uniform-grid spatial indexing, naive/grid equivalence and JMH JSON benchmarks.
 
-- Gradle Kotlin DSL,
-- dedicated `Vector2`,
-- immutable `SimulationState`,
-- steering behavior hierarchy,
-- neighbor-search abstraction,
-- boundary abstraction,
-- deterministic initialization,
-- headless engine/runner,
-- renderer abstraction,
-- JUnit 5 tests.
+## 0.4 — current
+Interactive simulation laboratory: complete wrapper, Start/Pause/Restart, live parameter tuning, colorful boids, metrics, grid overlay, fixed-density benchmarks and allocation profiling.
 
-## 0.3.0 — spatial indexing and JMH
+## 0.5 — proposed
+Optimize the next measured bottleneck using 0.4 allocation/density evidence. Candidates include reduced temporary collections, reusable buffers and internal array/SoA representations while preserving the public immutable model.
 
-Implemented:
-
-- `NeighborIndex` prepared once per simulation tick,
-- `NaiveNeighborSearch` baseline,
-- `UniformGridNeighborSearch`,
-- selectable `naive` / `grid` headless strategies,
-- JMH 1.37 integration,
-- prepared-query and complete-step benchmarks,
-- JSON benchmark output,
-- correctness equivalence tests,
-- JavaFX `media` runtime dependency fix and regression test.
-
-## 0.4 — interactive visualization
-
-Planned:
-
-- live sliders for behavior weights and radii,
-- pause/resume/single-step/reset,
-- selected-boid debug view,
-- velocity and steering vectors,
-- neighbor/perception visualization,
-- spatial-grid overlay,
-- trails and FPS/step-time overlay.
-
-## 0.5 — advanced environment
-
-Planned:
-
-- obstacles,
-- attractors and repulsors,
-- seek/flee/arrive behaviors,
-- optional predators.
-
-## Later milestones
-
-- multi-species systems,
-- flow/flock metrics and replay,
-- true toroidal neighbor metric,
-- quadtree comparison,
-- parallel/SoA experiments,
-- Scala 3 evaluation,
-- optional 3D/GPU experiments.
+## 0.6+
+Advanced steering behaviors, selected-boid diagnostics, obstacles/predators, optional parallelism and larger-scale experiments. QuadTree is added only if measured workloads justify it.

@@ -1,103 +1,62 @@
-# Benchmarks — Milestone 0.3.0
+# Benchmarks — milestone 0.4
 
-## Why JMH
+## Why the suite changed
 
-JMH is used because JVM microbenchmarks are easily distorted by warmup, JIT compilation, dead-code elimination and
-fork-specific state. JMH provides controlled warmup, measurement iterations and separate JVM forks.
+Milestone 0.3 showed that Uniform Grid significantly improves neighbor lookup and full-step performance as flock size grows, but fixed world dimensions also increase density. Milestone 0.4 therefore separates density growth from population growth and adds allocation profiling.
 
-The Gradle build uses `me.champeau.jmh` 0.7.3 and JMH 1.37.
 
-## Run
+## 0.3 measured baseline that motivates 0.4
 
-```bash
-gradle --no-configuration-cache jmh
-```
+The raw 0.3 reference run is retained as `benchmark/baselines/jmh-0.3.0.json`. It measured:
 
-or:
+| Boids | Naive neighbor queries | Grid neighbor queries | Naive full step | Grid full step |
+|---:|---:|---:|---:|---:|
+| 100 | 0.0420 ms | 0.02195 ms | 0.0584 ms | 0.0569 ms |
+| 1,000 | 4.324 ms | 1.413 ms | 5.165 ms | 2.263 ms |
+| 5,000 | 131.35 ms | 31.26 ms | 145.52 ms | 46.71 ms |
 
-```bash
-./benchmark.sh
-```
-
-The JSON result file is:
-
-```text
-benchmark/results/jmh-0.3.0.json
-```
-
-The benchmark contract is documented in:
-
-```text
-benchmark/benchmark-contract-0.3.0.json
-```
+At 5,000 boids the prepared grid improved neighbor lookup by about 4.2x and the complete simulation step by about 3.1x. The 0.4 benchmark additions are designed to explain the remaining scaling cost rather than introducing another spatial data structure prematurely.
 
 ## Benchmark families
 
-### NeighborSearchBenchmark
+### Fixed world
 
-This benchmark prepares both indexes during JMH setup and then queries every boid. It isolates repeated query cost from
-index-construction cost.
+`NeighborSearchBenchmark` and `SimulationStepBenchmark` preserve the 0.3 workload style: world size remains 1200x800 while boid count grows. This measures increasingly dense flocks.
 
-Measured methods:
+### Fixed density
 
-```text
-naiveQueries
-uniformGridQueries
+`FixedDensityBenchmark` scales world area approximately in direct proportion to boid count. The 1000-boid 1200x800 world is the density baseline. This better exposes the algorithmic scaling of Uniform Grid when average local density remains approximately constant.
+
+### Cell size
+
+`CellSizeBenchmark` evaluates `0.5x`, `1.0x`, `1.5x` and `2.0x` perception radius for a 5000-boid fixed world. It measures whether the default `cellSize = perceptionRadius` remains near the empirical optimum.
+
+### GC/allocation
+
+`benchmark-gc.sh` runs full-step benchmark families with JMH's GC profiler. Primary metrics of interest are allocation rate, normalized bytes/op, GC count and GC time.
+
+## Commands
+
+```bash
+./benchmark.sh
+./benchmark-gc.sh
 ```
 
-### SimulationStepBenchmark
-
-This benchmark executes one complete immutable simulation tick. It includes:
-
-- building the selected index once,
-- all neighborhood queries,
-- separation/alignment/cohesion,
-- integration and boundary handling,
-- creation of the next immutable state.
-
-Measured methods:
+Standard JSON:
 
 ```text
-naiveStep
-uniformGridStep
+benchmark/results/jmh-0.4.0.json
 ```
 
-## Workload sizes
-
-Default parameter values:
+GC JSON:
 
 ```text
-100
-1000
-5000 boids
+benchmark/results/jmh-0.4.0-gc.json
 ```
 
-Use identical machine/JVM settings when comparing results across commits or milestones.
+## Measurement rules
 
-## Default harness configuration
-
-```text
-warmup iterations: 3
-measurement iterations: 5
-warmup time: 1 s
-measurement time: 1 s
-forks: 2
-result format: JSON
-```
-
-## Interpretation
-
-Do not compare a single cold run or IDE timing against JMH results. For regression analysis, compare:
-
-- the same JDK major/update when possible,
-- the same CPU governor/power profile,
-- the same boid counts,
-- the same world and perception configuration,
-- the same benchmark method and JMH settings.
-
-The query benchmark intentionally excludes grid-build time. The full-step benchmark includes it. Both are needed to
-understand the tradeoff.
-
-## CI
-
-CI compiles the JMH source set through a dedicated `jmhClasses` step with configuration cache disabled, but it does not treat noisy shared-runner timing as a performance gate. Performance runs should be executed on controlled hardware.
+- Do not compare IDE wall-clock timing directly with JMH.
+- Keep JDK, power/governor state and benchmark parameters documented when comparing milestones.
+- GUI spatial metrics are disabled in benchmark fixtures.
+- A speedup claim should compare equivalent benchmark methods and world/density semantics.

@@ -1,242 +1,148 @@
-# Reynolds Boids Visualization
+# Reynolds Boids Visualization 0.4.0
 
-A Scala/ScalaFX implementation of Craig Reynolds' classic flocking model.
+Interactive Scala/ScalaFX implementation of Craig Reynolds' classic Boids model. Milestone 0.4 builds on the spatial-indexing/JMH work from 0.3 and turns the project into an interactive simulation laboratory with runtime controls, colorful boids, diagnostics and reproducible Gradle-based builds.
 
-Milestone **0.3.0** is the first performance-oriented release. It keeps the immutable simulation architecture introduced
-in 0.2, fixes the JavaFX runtime dependency discovered during real GUI execution, adds a uniform-grid spatial index, and
-introduces reproducible JMH benchmarks comparing the new index with the original O(n²) reference implementation.
+## Milestone 0.4 highlights
 
-## Highlights of 0.3.0
+- complete Gradle Wrapper surface (`gradlew`, `gradlew.bat`, `gradle/wrapper/*`),
+- Start / Pause / Restart controls,
+- slider + editable field controls for simulation parameters,
+- deterministic restart by seed,
+- colorful, velocity-oriented boid triangles,
+- optional uniform-grid overlay,
+- live FPS, simulation, rendering and spatial-index metrics,
+- fixed-world, fixed-density and grid-cell-size JMH benchmarks,
+- optional JMH GC/allocation profiling,
+- JavaFX `media` runtime dependency retained and regression-tested,
+- expanded unit/regression tests and documentation.
 
-- fixed ScalaFX runtime startup by adding the required `javafx-media` module,
-- retained Spotless/Scalafmt as a real release gate rather than disabling formatting checks,
-- changed neighbor discovery to build one `NeighborIndex` per immutable simulation tick,
-- retained `NaiveNeighborSearch` as the semantic and performance baseline,
-- added `UniformGridNeighborSearch` with exact Euclidean post-filtering,
-- made the uniform grid the default simulation strategy,
-- added `--neighbor naive|grid` to headless execution,
-- added JMH 1.37 benchmarks through the Gradle JMH plugin,
-- JSON benchmark output is written to `benchmark/results/jmh-0.3.0.json`,
-- added naive-vs-grid equivalence regression tests,
-- added a JavaFX runtime-classpath regression test for `javafx-media`,
-- CI compiles the JMH source set in a dedicated no-configuration-cache step.
+## Stack
 
-## Requirements
-
-- JDK 21+,
-- Gradle 9.8.0, or a generated Gradle Wrapper.
-
-The Java toolchain is pinned to JDK 21. The Gradle process itself may run on a newer supported JDK.
+- JDK toolchain 21
+- Scala 2.13.18
+- ScalaFX 21.0.0-R32
+- JavaFX 21.0.8
+- Gradle 9.8.0
+- JUnit Jupiter 5.13.4
+- Spotless + Scalafmt 3.10.7
+- JMH 1.37
 
 ## Build
 
-```bash
-gradle spotlessApply
-gradle clean build
-```
-
-If a wrapper is present:
+The repository ships a self-contained Gradle wrapper bootstrap. On a normal networked workstation the first invocation downloads and verifies the Gradle 9.8.0 binary distribution.
 
 ```bash
-./gradlew spotlessApply
 ./gradlew clean build
 ```
 
-## Run the ScalaFX visualization
+To replace the transparent bootstrap JAR with Gradle's official generated wrapper files, run once:
 
 ```bash
-gradle run
+./gradlew wrapper
 ```
 
-The desktop application uses `UniformGridNeighborSearch` by default.
+Then commit the generated wrapper files if this project is stored in Git.
 
-## Headless simulation
-
-The configured smoke task runs the grid implementation:
+## Run the desktop application
 
 ```bash
-gradle runHeadless
+./gradlew run
 ```
 
-The matching baseline scenario is:
+The right-side control panel exposes:
+
+- Start / Pause / Restart,
+- boid count (restart required),
+- seed (restart required),
+- max speed and max force,
+- perception and separation radii,
+- separation / alignment / cohesion weights,
+- boid size,
+- spatial-grid overlay.
+
+Live simulation values are applied without resetting the flock. Boid count and seed are intentionally restart-required so initialization remains deterministic.
+
+## Headless mode
 
 ```bash
-gradle runHeadlessNaive
+./gradlew runHeadless
+./gradlew runHeadlessNaive
 ```
 
-For direct execution with a selected search strategy, use the main class through your IDE or Gradle application
-classpath with these supported arguments:
+The commands execute deterministic smoke scenarios with uniform-grid and naive neighbor lookup respectively.
 
-```text
---boids <positive integer>
---steps <non-negative integer>
---seed <long>
---neighbor naive|grid
-```
-
-The two strategies intentionally use the same steering rules. The difference is only how candidate neighbors are found.
-
-## Spatial indexing
-
-Milestone 0.3 changes the neighbor contract from "scan a flock per query" to "build one index per flock snapshot":
-
-```text
-SimulationState(t)
-      |
-      v
-NeighborSearch.index(...)
-      |
-      v
-NeighborIndex
-      |
-      +--> neighborsOf(boid 1)
-      +--> neighborsOf(boid 2)
-      +--> ...
-      +--> neighborsOf(boid n)
-      |
-      v
-SimulationState(t + 1)
-```
-
-### Naive baseline
-
-`NaiveNeighborSearch` retains the complete flock and scans it for every query. A full simulation tick therefore remains
-O(n²) in the number of boids.
-
-### Uniform grid
-
-`UniformGridNeighborSearch` partitions the 2D world into square cells. Each query visits only cells intersecting its
-radius and then performs the same exact squared-distance predicate as the naive implementation. With approximately
-uniform density and a local perception radius, candidate work is expected to grow much more slowly than a full scan.
-
-The grid does **not** yet implement cross-edge toroidal neighbor distances. This preserves the Euclidean neighborhood
-semantics of 0.2 while the existing `WrapAroundBoundary` still wraps positions after integration.
-
-## JMH benchmarks
-
-The project uses the Gradle JMH plugin and JMH 1.37.
-
-Run:
+## Formatting
 
 ```bash
-gradle --no-configuration-cache jmh
+./gradlew spotlessApply
+./gradlew spotlessCheck
 ```
 
-or:
+CI checks formatting; it never modifies source files automatically.
+
+## Tests
+
+```bash
+./gradlew test
+```
+
+Tests cover vector math, classic Reynolds steering, grid-vs-naive equivalence, boundary behavior, deterministic initialization, controller lifecycle/configuration updates, spatial metrics, color stability, JavaFX runtime dependencies and wrapper completeness.
+
+## Benchmarks
+
+Standard JMH suite:
 
 ```bash
 ./benchmark.sh
 ```
 
-Results are written as JSON to:
-
-```text
-benchmark/results/jmh-0.3.0.json
-```
-
-The suite contains:
-
-- `NeighborSearchBenchmark` — prepared-index query cost,
-- `SimulationStepBenchmark` — complete immutable simulation tick including index construction.
-
-Default boid counts are:
-
-```text
-100
-1000
-5000
-```
-
-See [docs/BENCHMARKS.md](docs/BENCHMARKS.md) before interpreting results.
-
-## Formatting
-
-Apply formatting before building a release:
+GC/allocation profiling:
 
 ```bash
-gradle spotlessApply
+./benchmark-gc.sh
 ```
 
-Then verify:
-
-```bash
-gradle spotlessCheck
-```
-
-CI performs checks only; it never rewrites source files.
+Results are written under `benchmark/results/`. See `docs/BENCHMARKS.md`.
 
 ## Architecture
 
 ```text
-                            SimulationEngine
-                                  |
-                    +-------------+-------------+
-                    |                           |
-                    v                           v
-             SteeringBehavior             BoundaryPolicy
-                    |
-                    v
-              NeighborSearch
-                    |
-                    v
-               NeighborIndex
-                    |
-          +---------+---------+
-          |                   |
-          v                   v
-       Naive              UniformGrid
-
-                            SimulationState
-                                  |
-                      +-----------+-----------+
-                      |                       |
-                      v                       v
-               Headless runner              Renderer
-                                              |
-                                              v
-                                       ScalaFxRenderer
+ScalaFX UI
+  SimulationControlPanel
+  SimulationView
+  MetricsPanel
+          |
+          v
+SimulationController
+  status + immutable config + immutable state
+          |
+          v
+SimulationEngine
+  SteeringBehavior
+  NeighborSearch -> NeighborIndex
+  BoundaryPolicy
+          |
+          v
+SimulationState(t + 1)
+          |
+          +--> ScalaFxRenderer -> BoidColorStrategy
+          +--> runtime/spatial metrics
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for details.
-
-## Project structure
-
-```text
-src/main/scala/io/codeswarm/boids/
-├── app/
-├── behavior/
-├── boundary/
-├── math/
-├── model/
-├── neighbor/
-│   ├── NeighborSearch.scala
-│   ├── NeighborSearchStrategy.scala
-│   ├── NaiveNeighborSearch.scala
-│   └── UniformGridNeighborSearch.scala
-├── rendering/
-└── simulation/
-
-src/jmh/java/io/codeswarm/boids/benchmark/
-├── NeighborSearchBenchmark.java
-└── SimulationStepBenchmark.java
-
-benchmark/
-├── benchmark-contract-0.3.0.json
-└── results/
-```
+The simulation domain remains independent of ScalaFX. UI state, colors and frame timings are not stored in `Boid` or `SimulationState`.
 
 ## Documentation
 
-- [Algorithm](docs/ALGORITHM.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Benchmarks](docs/BENCHMARKS.md)
-- [Implementation tasks](docs/IMPLEMENTATION_TASKS.md)
-- [Migration from 0.2](docs/MIGRATION_FROM_0.2.0.md)
-- [Headless mode](docs/HEADLESS_MODE.md)
-- [Roadmap](docs/ROADMAP.md)
-- [Release checklist](docs/RELEASE_CHECKLIST.md)
-- [Changelog](CHANGELOG.md)
+- `docs/ARCHITECTURE.md`
+- `docs/ALGORITHM.md`
+- `docs/UI.md`
+- `docs/BENCHMARKS.md`
+- `docs/HEADLESS_MODE.md`
+- `docs/IMPLEMENTATION_TASKS.md`
+- `docs/MIGRATION_FROM_0.3.0.md`
+- `docs/RELEASE_CHECKLIST.md`
+- `docs/ROADMAP.md`
 
 ## License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE).
+Apache License 2.0. See `LICENSE` and `NOTICE`.

@@ -1,43 +1,25 @@
 # Headless mode
 
-The simulation core does not require JavaFX.
-
-The standard smoke task uses the uniform-grid strategy:
+The headless entry point runs the same deterministic simulation core without JavaFX rendering.
 
 ```bash
-gradle runHeadless
+./gradlew runHeadless
+./gradlew runHeadlessNaive
 ```
 
-The matching naive baseline task is:
+Direct execution supports:
+
+```text
+--boids <positive-int>
+--steps <non-negative-int>
+--seed <long>
+--neighbor grid|naive
+```
+
+Example:
 
 ```bash
-gradle runHeadlessNaive
+./gradlew run --args='--boids 1000 --steps 10000 --seed 42 --neighbor grid'
 ```
 
-Configured arguments are:
-
-```text
---boids 250 --steps 500 --seed 42 --neighbor grid
-```
-
-Supported strategies:
-
-```text
-naive
-  Reference full-flock linear scan.
-
-grid
-  Uniform-grid spatial index; default in milestone 0.3.
-```
-
-Headless output includes:
-
-```text
-tick
-boids
-neighborSearch
-averageSpeed
-finite
-```
-
-A fixed seed produces reproducible initialization and deterministic execution for the same strategy and configuration.
+The Gradle `run` task is reserved for the GUI main class, so custom headless arguments are normally best executed by adding/using a dedicated `JavaExec` task or invoking the built distribution directly.

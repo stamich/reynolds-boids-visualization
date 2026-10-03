@@ -1,124 +1,74 @@
-# Architecture — Milestone 0.3.0
+# Architecture — milestone 0.4
 
 ## Goals
 
-Milestone 0.3 keeps the domain/rendering separation from 0.2 and changes the expensive neighborhood boundary so a
-spatial data structure can be built once for each immutable flock snapshot.
-
-The simulation core remains independent of ScalaFX.
-
-## Component view
+Milestone 0.4 keeps the deterministic simulation core independent from ScalaFX while adding an application/controller layer for interactive operation and observability.
 
 ```text
-BoidApplication / HeadlessApplication
-                |
-                v
-        SimulationComponents
-                |
-                v
-        DefaultSimulationEngine
-          /         |          \
-         /          |           \
-        v            v            v
-SteeringBehavior NeighborSearch BoundaryPolicy
-                      |
-                      v
-                 NeighborIndex
-                   /      \
-                  /        \
-                 v          v
-              Naive    UniformGrid
-
-SimulationState -------------------------------------> Renderer
-                                                           |
-                                                           v
-                                                    ScalaFxRenderer
++----------------------------- ScalaFX -----------------------------+
+| SimulationView   SimulationControlPanel   MetricsPanel            |
+|       |                    |                    ^                  |
+|       |                    v                    |                  |
+|       +------------ SimulationController ------+                  |
++-----------------------------|-------------------------------------+
+                              v
+                    SimulationEngine
+                 /         |          \
+        SteeringBehavior NeighborSearch BoundaryPolicy
+                              |
+                         NeighborIndex
+                       /               \
+                    Naive          UniformGrid
+                                      |
+                                SpatialMetrics*
+                              (* optional only)
+                              |
+                              v
+                    SimulationState(t+1)
+                              |
+                    +---------+---------+
+                    |                   |
+               ScalaFxRenderer      headless/JMH
+                    |
+             BoidColorStrategy
 ```
 
-## Immutable tick model
+## Dependency rules
 
-A tick is evaluated from one immutable state:
+1. `model`, `math`, `behavior`, `neighbor`, `boundary` and `simulation` do not depend on ScalaFX.
+2. `SimulationState` contains only deterministic domain state: tick and boids.
+3. Lifecycle (`Ready/Running/Paused`), UI values and frame timings belong to `ui`/`metrics`.
+4. Colors are renderer concerns, selected by `BoidColorStrategy`; `Boid` has no color field.
+5. Spatial diagnostics are optional and can be disabled for benchmark hot paths.
 
-```text
-state(t)
-   |
-   +--> build NeighborIndex once
-   |
-   +--> query neighbors for every boid
-   |
-   +--> evaluate weighted steering
-   |
-   +--> integrate velocity and position
-   |
-   v
-state(t + 1)
-```
+## SimulationController
 
-No boid can observe another boid that has already been updated during the same tick.
+`SimulationController` owns the mutable application shell around immutable domain values:
 
-## NeighborSearch and NeighborIndex
+- current `SimulationConfig`,
+- current `SimulationState`,
+- current `SimulationStatus`,
+- current engine wiring,
+- restart-required marker,
+- latest `RuntimeMetrics`.
 
-`NeighborSearch` is responsible for preparation:
+Live parameter changes replace the immutable config and rebuild lightweight engine wiring without resetting state. `boidCount` and `seed` only take effect after `restart()`.
 
-```scala
-def index(flock: IndexedSeq[Boid], world: WorldConfig): NeighborIndex
-```
+## Uniform Grid instrumentation
 
-`NeighborIndex` is responsible for repeated queries:
+`UniformGridNeighborSearch` accepts `metricsEnabled`. When disabled, it creates the same non-instrumented index path used by JMH. When enabled, the prepared index records:
 
-```scala
-def neighborsOf(boid: Boid, radius: Double): IndexedSeq[Boid]
-```
+- occupied cells,
+- average/max boids per occupied cell,
+- candidates inspected per query,
+- accepted neighbors per query.
 
-This split is important. Building a grid inside every `neighborsOf` call would still make the algorithm expensive and
-would hide index-construction cost from simulation-step benchmarks.
-
-## NaiveNeighborSearch
-
-The naive implementation stores the immutable flock and scans every boid for each query. It is retained for:
-
-- semantic correctness comparison,
-- performance baseline,
-- regression diagnosis,
-- small-flock scenarios where simplicity may be sufficient.
-
-## UniformGridNeighborSearch
-
-The grid maps world positions to integer cells:
-
-```text
-cellX = floor(x / cellSize)
-cellY = floor(y / cellSize)
-```
-
-For a query radius `r`, it examines cells within:
-
-```text
-ceil(r / cellSize)
-```
-
-cells in each direction. Candidates then pass through the same strict squared-Euclidean-distance predicate used by the
-naive baseline.
-
-The default cell size equals `perceptionRadius`, which means the standard full-perception query normally examines a 3x3
-cell neighborhood.
-
-## Boundary semantics
-
-`WrapAroundBoundary` still maps positions back into the rectangular world after integration. Neighbor search in 0.3 is
-still Euclidean, not minimum-image/toroidal. Therefore boids near opposite world edges are not yet treated as close
-neighbors.
-
-A true toroidal metric is intentionally deferred so the performance change can be compared against 0.2 semantics.
+This avoids contaminating performance measurements with GUI telemetry.
 
 ## Rendering
 
-`Renderer` receives immutable states only. `ScalaFxRenderer` knows about JavaFX/ScalaFX; the simulation core does not.
+`ScalaFxRenderer` draws velocity-oriented triangles and delegates color choice to `BoidColorStrategy`. `IdBasedColorStrategy` maps stable IDs to well-separated HSB hues. Grid overlay rendering is separate from simulation indexing.
 
-Milestone 0.3 explicitly includes `javafx-media` because the selected ScalaFX version loads JavaFX media types while
-initializing canvas-related classes.
+## Build reproducibility
 
-## Benchmark boundary
-
-JMH benchmark sources live outside production sources in `src/jmh/java` and depend on the production `main` source set.
-The benchmark suite measures both isolated neighborhood queries and complete simulation ticks.
+The archive contains wrapper scripts, properties and a transparent bootstrap JAR. The bootstrap downloads the checksum-pinned Gradle 9.8.0 distribution and launches it. Running `./gradlew wrapper` replaces the bootstrap artifacts with Gradle's official generated wrapper files.
