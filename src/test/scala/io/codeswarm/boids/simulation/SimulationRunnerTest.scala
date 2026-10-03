@@ -4,7 +4,7 @@ import io.codeswarm.boids.model.{FlockConfig, SimulationConfig}
 import org.junit.jupiter.api.Assertions._
 import org.junit.jupiter.api.Test
 
-/** Tests the headless multistep runner. */
+/** Tests the headless multi-step runner. */
 final class SimulationRunnerTest {
 
   @Test
